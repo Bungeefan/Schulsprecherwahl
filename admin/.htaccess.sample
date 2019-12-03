@@ -1,0 +1,4 @@
+AuthType Basic
+AuthName "Admin Portal"
+AuthUserFile /var/www/admin/.htpasswd
+require valid-user

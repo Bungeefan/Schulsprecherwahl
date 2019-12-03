@@ -1,0 +1,138 @@
+form > * {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+form .choice {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background: hsl(253, 24%, 16%);
+    padding: 1em;
+    margin: 1.5em;
+    width: calc((100% / 6) - 3em);
+    min-width: 15em;
+    border-radius: 25px;
+    box-shadow: 5px 5px 20px black;
+
+}
+
+form .choice .candidate_name {
+    font-family: 'Open Sans', sans-serif;
+    text-align: center;
+    font-size: x-large;
+    flex-grow: 1;
+    margin: 1.5em 0;
+}
+
+form .choice .candidate_description {
+    margin-top: 0;
+    margin-bottom: 2em;
+    word-break: break-word;
+    text-align: center;
+}
+
+form .choice .candidate_description:empty {
+    display: none;
+}
+
+form .choice .candidate_picture_wrapper {
+    display: flex;
+    justify-content: center;
+    margin: 0.5em;
+
+    width: 12.5em;
+    height: 12.5em;
+    overflow: hidden;
+    border-radius: 50%;
+}
+
+form .choice img.candidate_picture {
+    width: 100%;
+    height: auto;
+    background-color: hsl(253, 24%, 10%);
+    line-height: 12;
+    text-align: center;
+}
+
+form .choice img.candidate_picture:not([src=""]) {
+    align-self: flex-start;
+}
+
+form .choice .candidate_picture {
+    flex-grow: 1;
+}
+
+form .choice .points {
+    font-size: 1.8rem;
+}
+
+form .choice .votes {
+    font-size: 2rem;
+}
+
+form .choice .points, form .choice .votes {
+    font-weight: 700;
+}
+
+button[type=submit] {
+    font-size: 2em;
+}
+
+form .choice .runoff_checkbox {
+    position: absolute;
+    opacity: 0;
+    transform: scale(1.03);
+}
+
+form .choice .runoff_checkbox:focus {
+    transform: scale(1.03);
+}
+
+form .choice .runoff_check {
+    display: block;
+    background-color: hsl(253, 24%, 28%);
+    border: 0.4em solid hsl(253, 24%, 10%);
+    --size: 5em;
+    width: var(--size);
+    height: var(--size);
+    border-radius: 14px;
+    cursor: pointer;
+}
+
+form .choice .runoff_check:active > .runoff_checkbox {
+    transform: scale(1.05);
+    border-radius: 30px;
+}
+
+form .choice .runoff_checkbox:checked + svg path {
+    stroke-dashoffset: 0;
+}
+
+form .choice .runoff_check svg {
+    pointer-events: none;
+}
+
+form .choice .runoff_check svg path {
+    fill: none;
+    stroke: greenyellow;
+    stroke-width: 4px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 101;
+
+    /*transition: all 350ms cubic-bezier(1, 0, 0.37, 0.91);*/
+    transition: all 0s cubic-bezier(0.5, 0, 0.5, 0);
+    transition-delay: 0s;
+}
+
+form .choice .runoff_checkbox:checked + svg path {
+    transition: all 200ms cubic-bezier(0.5, 0, 0.5, 0);
+}
+
+form .choice .runoff_checkbox:checked + svg path:nth-child(2) {
+    transition-delay: 230ms;
+}

@@ -1,0 +1,217 @@
+:root {
+    --properties-padding-size: 0.5em;
+}
+
+.data {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.data .leftCard, .data .rightCard, .data .rightCard > * {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.data .leftCard, .data .rightCard {
+    flex-grow: 1;
+}
+
+.data .leftCard {
+    text-align: center;
+    min-width: 15vw;
+}
+
+.data .rightCard {
+    min-width: 30vw;
+}
+
+.data .rightCard > * {
+    padding: 0.5rem 0;
+}
+
+.data .leftCard > * {
+    padding: 0.35rem 0;
+}
+
+.data .vr {
+    border-left: 1px solid white;
+    margin: 0 1em;
+}
+
+.data h1, .data h2, .data h3, .data h4, .data h5, .data h6 {
+    margin-bottom: 0;
+}
+
+.data .table-header {
+    margin-bottom: 0.25em;
+}
+
+.data select {
+    flex-grow: 1;
+    min-width: 14vw;
+}
+
+.data #keysList option.used {
+    background-color: yellow;
+    color: black;
+}
+
+.data #keysList option.voted {
+    background-color: limegreen;
+}
+
+.data #keysList option.blacklisted {
+    background-color: red;
+}
+
+.data .properties {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.data .property > * {
+    margin: 0.1em 0;
+}
+
+.data .properties > label, .data .property > label {
+    font-size: 1.2em;
+}
+
+.data .properties label:not([for]) {
+    margin: 0;
+}
+
+.data .property label:not([for]) {
+    font-size: 1em;
+}
+
+.data .property {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.data .properties > *:not(:only-child) {
+    margin: 0.5em 0;
+}
+
+.data .properties > *:not(:only-child):not(:last-child) {
+    margin-right: calc(var(--properties-padding-size) * 2);
+}
+
+.data .property.centered {
+    align-items: center;
+}
+
+.data .property label.checkcontainer {
+    margin: 0.5em 0;
+}
+
+.data .property .checkcontainer {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 17px;
+    user-select: none;
+}
+
+.data .property .checkcontainer input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.data .property .checkcontainer input:disabled ~ .checkmark {
+    background-color: hsl(0, 0%, 33%);
+    cursor: default;
+}
+
+.data .property .checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: hsl(0, 0%, 93%);
+}
+
+.data .property .checkcontainer:hover input ~ .checkmark {
+    background-color: hsl(0, 0%, 80%);
+}
+
+.data .property .checkcontainer:hover input:disabled ~ .checkmark {
+    background-color: hsl(0, 0%, 20%);
+}
+
+.data .property .checkcontainer input:checked ~ .checkmark {
+    background-color: hsl(207, 90%, 54%);
+}
+
+.data .property .checkcontainer input:checked:disabled ~ .checkmark {
+    background-color: hsl(207, 90%, 30%);
+}
+
+.data .property .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.data .property .checkcontainer input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.data .property .checkcontainer .checkmark:after {
+    left: 10px;
+    top: 6px;
+    width: 7px;
+    height: 12px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+}
+
+.data .property .radiobtn {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: #eee;
+    border-radius: 50%;
+}
+
+.data .property .checkcontainer:hover input ~ .radiobtn {
+    background-color: #ccc;
+}
+
+.data .property .checkcontainer input:checked ~ .radiobtn {
+    background-color: #2196F3;
+}
+
+.data .property .radiobtn:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.data .property .checkcontainer input:checked ~ .radiobtn:after {
+    display: block;
+}
+
+.data .property .checkcontainer .radiobtn:after {
+    top: 9px;
+    left: 9px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: white;
+}
