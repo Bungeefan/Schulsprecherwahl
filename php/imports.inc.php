@@ -1,6 +1,6 @@
 <meta charset="UTF-8">
 <title><?= $title ?></title>
-<meta name="description" content="Eine neue moderne Schulsprecherwahl mit Dark Theme">
+<meta name="description" content="Ein neues und modernes Schulsprecherwahlsystem mit Dark Theme">
 <meta name="keywords" content="Schulsprecherwahl,Schule">
 <meta name="author" content="Severin Hamader">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
