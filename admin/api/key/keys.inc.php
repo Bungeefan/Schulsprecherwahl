@@ -1,5 +1,5 @@
 <?php
-require_once "../config/ajax_start.inc.php";
+require_once __DIR__ . "/../config/ajax_start.inc.php";
 
 function getKeys($voteKeys = null)
 {

@@ -1,6 +1,6 @@
 <?php
 
-if (file_exists(dirname(__FILE__) . "/database_credentials.php")) {
+if (file_exists(__DIR__ . "/database_credentials.php")) {
     include_once "database_credentials.php";
 } else {
     include_once "database_credentials_default.php";

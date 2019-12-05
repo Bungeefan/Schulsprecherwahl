@@ -1,11 +1,15 @@
 <?php
 ini_set('html_errors', false);
-set_include_path(get_include_path() . PATH_SEPARATOR . $_SERVER['DOCUMENT_ROOT']);
-require_once "admin/api/config/database.php";
-$configFile = $_SERVER['DOCUMENT_ROOT'] . "/settings.cfg.json";
+define("PROJECT_PATH", str_replace($_SERVER["DOCUMENT_ROOT"] . "/", "", str_replace("\\", "/", __DIR__)));
+set_include_path(get_include_path() . PATH_SEPARATOR . PROJECT_PATH . PATH_SEPARATOR . __DIR__);
+
+require_once __DIR__ . "/admin/api/config/database.php";
+
+$configFile = PROJECT_PATH . "/settings.cfg.json";
 $config = new stdClass();
-$upload_folder = '/uploads/files/';
-$intern_upload_folder = $_SERVER['DOCUMENT_ROOT'] . $upload_folder;
+$upload_folder = "uploads/files/";
+$intern_upload_folder = __DIR__ . "/" . $upload_folder;
+
 $database = new Database();
 
 readConfig();

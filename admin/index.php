@@ -1,6 +1,5 @@
 <?php
-require_once "php/admin_start.inc.php";
-
+require_once __DIR__ . "/php/admin_start.inc.php";
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -176,7 +175,7 @@ require_once "php/admin_start.inc.php";
                             <button class="style-btn" id="resetKeysBtn" formaction="api/reset.php?type=keys"
                                     type="submit">Alle Keys löschen
                             </button>
-                            <a class="style-link" href="/admin/api/key/download.php" download>Keys
+                            <a class="style-link" href="api/key/download.php" download>Keys
                                 exportieren</a>
                         </div>
                         <div class="btnGroup">
@@ -194,7 +193,7 @@ require_once "php/admin_start.inc.php";
                             <div id="resultsData"></div>
                         </div>
                         <div class="btnGroup">
-                            <a class="style-link" href="/admin/api/results/download.php" download>Ergebnisse
+                            <a class="style-link" href="api/results/download.php" download>Ergebnisse
                                 exportieren</a>
                             <button class="style-btn" id="resetVotesBtn" formaction="api/reset.php?type=votes"
                                     type="submit">Alle Stimmen löschen
@@ -239,11 +238,11 @@ require_once "php/admin_start.inc.php";
             </div>
         </div>
         <div class="btnGroup">
-            <a class="style-link" href="/index.php">&#60; Zurück zur Wahl</a>
+            <a class="style-link" href="../index.php">&#60; Zurück zur Wahl</a>
             <button class="style-btn" id="refreshBtn" type="button">Aktualisieren</button>
         </div>
     </div>
 </main>
-<?php include_once "../php/footer.inc.php"; ?>
+<?php include "php/footer.inc.php"; ?>
 </body>
 </html>

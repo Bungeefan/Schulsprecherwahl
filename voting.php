@@ -5,7 +5,7 @@ $runoff = isRunoff();
 $voteEnabled = !isVoteDisabled();
 
 if (!isset($_SESSION['key']) || !checkKeyVotes($runoff, $_SESSION['key'])) {
-    header("Location: /index.php");
+    header("Location: index.php");
     exit;
 }
 
@@ -90,7 +90,7 @@ if ($formWasSubmitted) {
 }
 
 if (count($candidates) > 0 && $canContinue) {
-    header("refresh:15;url=/index.php");
+    header("refresh:15;url=index.php");
 }
 ?>
 <!DOCTYPE html>
@@ -177,7 +177,7 @@ if (count($candidates) > 0 && $canContinue) {
         <?php } ?>
     </div>
 </main>
-<?php include_once "php/footer.inc.php"; ?>
+<?php include "php/footer.inc.php"; ?>
 <!-- Modal -->
 <div class="modal fade" id="warningModal" tabindex="-1" role="dialog" aria-labelledby="warningModalLabel"
      aria-hidden="true">

@@ -1,5 +1,5 @@
 <?php
-require_once "../config/database.php";
+require_once __DIR__ . "/../config/ajax_start.inc.php";
 require_once "upload.inc.php";
 
 function deleteOldImage($candidateID)
@@ -17,7 +17,7 @@ WHERE `ID` = :candidateID
     )");
     if ($statement->execute(array(":candidateID" => $candidateID))) {
         $result = $statement->fetchColumn();
-        if ($result != null) {
+        if ($result != null && file_exists($intern_upload_folder . $result)) {
             $imageDeleted = unlink($intern_upload_folder . $result);
         } else {
             $imageDeleted = false;
@@ -26,15 +26,23 @@ WHERE `ID` = :candidateID
     return $imageDeleted;
 }
 
-function processImageIfReceived($data, &$imagePath, &$message)
+function imageReceived($data)
 {
     $imageReceived = false;
     if (!empty($_FILES['image']['name'])) {
-        $imagePath = processImage($message);
         $imageReceived = true;
     } else if (empty($data->candidateImage)) {
-        $imagePath = null;
         $imageReceived = true;
     }
     return $imageReceived;
+}
+
+function processImage($data, &$imagePath, &$message)
+{
+    if (!empty($_FILES['image']['name'])) {
+        $imagePath = processReceivedImage($message);
+        $imageReceived = true;
+    } else if (empty($data->candidateImage)) {
+        $imagePath = null;
+    }
 }

@@ -16,9 +16,10 @@ if (checkDatabase($arr)) {
     ) {
         $message = "";
         $imagePath = true;
-        $imageReceived = processImageIfReceived($data, $imagePath, $message);
+        $imageReceived = imageReceived($data);
         if ($imageReceived) {
             $imageDeleted = deleteOldImage($data->candidateID);
+            processImage($data, $imagePath, $message);
         }
 
         $statement = $database->getConnection()->prepare("UPDATE `candidates` SET FirstName = :firstName, LastName = :lastName, AdditionalText = :additionalText" . ($imageReceived ? " , ImagePath = :imagePath" : "") . " WHERE ID = :candidateID");

@@ -1,7 +1,7 @@
 <?php
-require_once "../config/ajax_start.inc.php";
+require_once __DIR__ . "/../config/ajax_start.inc.php";
 
-function processImage(&$message)
+function processReceivedImage(&$message)
 {
     global $intern_upload_folder;
     if (!file_exists($intern_upload_folder)) {
