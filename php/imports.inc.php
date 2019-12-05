@@ -6,8 +6,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!--Styles-->
-<link href="/lib/css/bootstrap.4.3.1.min.css" rel="stylesheet" type="text/css">
-<link href="/css/base.css" rel="stylesheet" type="text/css">
+<link href="lib/css/bootstrap.4.3.1.min.css" rel="stylesheet" type="text/css">
+<link href="css/base.css" rel="stylesheet" type="text/css">
 <style>
     /* roboto-regular - latin */
     @font-face {
