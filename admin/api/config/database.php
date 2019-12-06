@@ -1,9 +1,10 @@
 <?php
+require_once __DIR__ . "/../../../default_start.inc.php";
 
-if (file_exists(__DIR__ . "/database_credentials.php")) {
-    include_once "database_credentials.php";
+if (file_exists("config.inc.php")) {
+    include_once "config.inc.php";
 } else {
-    include_once "database_credentials_default.php";
+    include_once "config.inc.default.php";
 }
 
 class Database
@@ -19,15 +20,14 @@ class Database
 
     public function getConnection(): PDO
     {
-        global $host, $db_char, $db_name, $db_user, $db_pass;
         if ($this->conn === null) {
             try {
-                $this->conn = new PDO("mysql:host=" . $host . ";charset=" . $db_char, $db_user, $db_pass, array(
+                $this->conn = new PDO("mysql:host=" . DB_HOST . ";charset=" . DB_CHAR, DB_USER, DB_PASS, array(
 //                    PDO::ATTR_PERSISTENT => true,
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 ));
                 try {
-                    $this->conn->query("USE $db_name");
+                    $this->conn->query("USE " . DB_NAME);
                 } catch (PDOException $exception) {
                     $this->working = false;
                 }
