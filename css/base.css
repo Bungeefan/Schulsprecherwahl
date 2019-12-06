@@ -71,6 +71,8 @@ a:hover {
 }
 
 .message {
+    max-width: 50rem;
+    word-break: break-word;
 
     align-self: center;
     font-size: 1.5em;

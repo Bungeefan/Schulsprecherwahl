@@ -19,12 +19,14 @@ class Database
 
     private $working = true;
 
+    private $lastError;
+
     function __construct()
     {
         $this->getConnection();
     }
 
-    public function getConnection(): PDO
+    public function getConnection()
     {
         if ($this->conn === null) {
             try {
@@ -35,10 +37,12 @@ class Database
                 try {
                     $this->conn->query("USE " . DB_NAME);
                 } catch (PDOException $exception) {
+                    $this->lastError = $exception->getMessage();
                     $this->working = false;
                 }
             } catch (PDOException $exception) {
-                die("PDO Connection error: " . $exception->getMessage());
+                $this->lastError = "PDO Connection error: " . $exception->getMessage();
+                $this->working = false;
             }
         }
         return $this->conn;
@@ -52,5 +56,10 @@ class Database
     public function setWorking(bool $working): void
     {
         $this->working = $working;
+    }
+
+    public function getLastError()
+    {
+        return $this->lastError;
     }
 }

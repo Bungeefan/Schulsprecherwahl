@@ -8,7 +8,7 @@ function checkDatabase(&$arr)
     $isWorking = $database->isWorking();
     if (!$isWorking) {
         http_response_code(503);
-        $arr = array("message" => "Can't access database.");
+        $arr = array("message" => $database->getLastError());
     }
     return $isWorking;
 }
