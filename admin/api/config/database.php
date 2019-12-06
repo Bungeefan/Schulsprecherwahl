@@ -1,10 +1,16 @@
 <?php
 require_once __DIR__ . "/../../../default_start.inc.php";
 
-if (file_exists("config.inc.php")) {
-    include_once "config.inc.php";
+const SAMPLE_CONFIG_FILE = "config.sample.inc.php";
+const CONFIG_FILE = "config.inc.php";
+
+if (file_exists(CONFIG_FILE)) {
+    include_once CONFIG_FILE;
 } else {
-    include_once "config.inc.default.php";
+    include_once SAMPLE_CONFIG_FILE;
+    if (file_exists(SAMPLE_CONFIG_FILE)) {
+        copy(SAMPLE_CONFIG_FILE, CONFIG_FILE);
+    }
 }
 
 class Database
