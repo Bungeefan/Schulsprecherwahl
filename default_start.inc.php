@@ -1,4 +1,9 @@
 <?php
+$ua = htmlentities($_SERVER['HTTP_USER_AGENT'], ENT_QUOTES, 'UTF-8');
+if (preg_match('~MSIE|Internet Explorer~i', $ua) || (strpos($ua, 'Trident/7.0') !== false && strpos($ua, 'rv:11.0') !== false)) {
+    die("Duh... This website doesn't support Internet Explorer in ANY version! <a href='https://www.mozilla.org/firefox/download'>Download a better browser now.</a>");
+}
+
 ini_set('html_errors', false);
 define("PROJECT_PATH", str_replace($_SERVER["DOCUMENT_ROOT"] . "/", "", str_replace("\\", "/", __DIR__)));
 set_include_path(get_include_path() . PATH_SEPARATOR . PROJECT_PATH . PATH_SEPARATOR . __DIR__);

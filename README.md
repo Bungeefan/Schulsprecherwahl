@@ -1,6 +1,9 @@
 # Schulsprecherwahl
 Ein neues und modernes Schulsprecherwahlsystem mit Dark Theme.
 
+Kompatibilität getestet mit: Chrome 77+, Firefox 69+  
+**Nicht kompatibel mit IE** 
+
 ### Allgemeine Konfiguration
 * **2 Möglichkeiten, um _config.inc.php_ zu erstellen:**
     * Rechte des Deployment Ordners anpassen, damit PHP die Konfiguration automatisch verwalten kann (z.B.: `chmod 0777 Schulsprecherwahl/`)
