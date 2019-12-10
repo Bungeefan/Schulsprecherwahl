@@ -1,6 +1,6 @@
 <?php
 require_once "../config/ajax_start.inc.php";
-$sqlCreateFile = "../config/voting_system_create.sql";
+$sqlCreateFile = __DIR__ . "/../config/voting_system_create.sql";
 
 global $arr;
 if (file_exists($sqlCreateFile)) {
