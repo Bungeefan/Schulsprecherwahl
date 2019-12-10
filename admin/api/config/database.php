@@ -9,7 +9,9 @@ if (file_exists(CONFIG_FILE)) {
 } else {
     include_once SAMPLE_CONFIG_FILE;
     if (file_exists(SAMPLE_CONFIG_FILE)) {
-        copy(SAMPLE_CONFIG_FILE, CONFIG_FILE);
+        if (is_writable(dirname(SAMPLE_CONFIG_FILE))) {
+            copy(SAMPLE_CONFIG_FILE, CONFIG_FILE);
+        }
     }
 }
 
