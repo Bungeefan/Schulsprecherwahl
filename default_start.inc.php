@@ -1,7 +1,7 @@
 <?php
 $ua = htmlentities($_SERVER['HTTP_USER_AGENT'], ENT_QUOTES, 'UTF-8');
 if (preg_match('~MSIE|Internet Explorer~i', $ua) || (strpos($ua, 'Trident/7.0') !== false && strpos($ua, 'rv:11.0') !== false)) {
-    die("Duh... This website doesn't support Internet Explorer in ANY version! <a href='https://www.mozilla.org/firefox/download'>Download a better browser now.</a>");
+    die("Duh... No version of Internet Explorer supports this website! <a href='https://www.mozilla.org/firefox/download'>Download a better browser now.</a> Thanks.");
 }
 
 ini_set('html_errors', false);
