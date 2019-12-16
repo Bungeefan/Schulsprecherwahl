@@ -38,6 +38,14 @@ a:hover {
     text-decoration: underline;
 }
 
+a.visible {
+    color: hsl(281, 86%, 40%);
+}
+
+a.visible:hover {
+    color: hsl(281, 86%, 40%);
+}
+
 .modal-content {
     color: white;
     border-radius: 10px;

@@ -7,7 +7,7 @@ $loginEnabled = !isLoginDisabled();
 if (isset($_GET['logout']) || isset($_SESSION['key']) && !checkKeyVotes($runoff, $_SESSION['key'])) {
     logout($_SESSION['key']);
     header("Location: index.php");//reload
-    exit;
+    die();
 }
 $formWasSubmitted = $_SERVER['REQUEST_METHOD'] == 'POST';
 
@@ -22,7 +22,7 @@ if ($formWasSubmitted && !isset($_SESSION['key'])) {
                     updateKeyUsedTime($key);
                     session_regenerate_id();
                     header("Location: voting.php");
-                    exit;
+                    die();
                 }
             } else {
                 $errorMessage = "Dieser Key ist ungültig!";

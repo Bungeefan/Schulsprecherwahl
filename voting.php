@@ -6,7 +6,7 @@ $voteEnabled = !isVoteDisabled();
 
 if (!isset($_SESSION['key']) || !checkKeyVotes($runoff, $_SESSION['key'])) {
     header("Location: index.php");
-    exit;
+    die();
 }
 
 $statement = $database->getConnection()->query("SELECT * FROM `candidates` ORDER BY ID ASC");

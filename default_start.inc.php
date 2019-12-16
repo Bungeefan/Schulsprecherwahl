@@ -1,13 +1,16 @@
 <?php
-$ua = htmlentities($_SERVER['HTTP_USER_AGENT'], ENT_QUOTES, 'UTF-8');
-if (preg_match('~MSIE|Internet Explorer~i', $ua) || (strpos($ua, 'Trident/7.0') !== false && strpos($ua, 'rv:11.0') !== false)) {
-    die("Duh... No version of Internet Explorer supports this website! <a href='https://www.mozilla.org/firefox/download'>Download a better browser now.</a> Thanks.");
-}
-
 ini_set('html_errors', false);
 define("PROJECT_PATH", str_replace($_SERVER["DOCUMENT_ROOT"] . "/", "", str_replace("\\", "/", __DIR__)));
 set_include_path(get_include_path() . PATH_SEPARATOR . PROJECT_PATH . PATH_SEPARATOR . __DIR__);
 chdir(__DIR__);
+
+$ua = htmlentities($_SERVER['HTTP_USER_AGENT'], ENT_QUOTES, 'UTF-8');
+if (basename($_SERVER["SCRIPT_FILENAME"], '.inc.php') != "not_supported" && (preg_match('~MSIE|Internet Explorer~i', $ua) || (strpos($ua, 'Trident/7.0') !== false && strpos($ua, 'rv:11.0') !== false))) {
+    $browser = "Internet Explorer";
+    include_once("php/not_supported.inc.php");
+    die();
+}
+
 require_once __DIR__ . "/admin/api/config/database.php";
 
 $configFile = PROJECT_PATH . "/settings.cfg.json";
