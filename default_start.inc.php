@@ -93,7 +93,6 @@ function updateKeyUsedTime($key)
 function logout($key)
 {
     if (isset($key)) {
-        updateKeyUsedTime($key);
         session_destroy();
     }
 }
