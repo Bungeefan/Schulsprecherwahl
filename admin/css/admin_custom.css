@@ -1,0 +1,12 @@
+.data #keysList option.used {
+    background-color: yellow;
+    color: black;
+}
+
+.data #keysList option.voted {
+    background-color: limegreen;
+}
+
+.data #keysList option.blacklisted {
+    background-color: red;
+}

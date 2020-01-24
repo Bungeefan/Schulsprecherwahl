@@ -36,11 +36,6 @@
     padding: 0.35rem 0;
 }
 
-.data .vr {
-    border-left: 1px solid white;
-    margin: 0 1em;
-}
-
 .data h1, .data h2, .data h3, .data h4, .data h5, .data h6 {
     margin-bottom: 0;
 }
@@ -52,19 +47,6 @@
 .data select {
     flex-grow: 1;
     min-width: 14vw;
-}
-
-.data #keysList option.used {
-    background-color: yellow;
-    color: black;
-}
-
-.data #keysList option.voted {
-    background-color: limegreen;
-}
-
-.data #keysList option.blacklisted {
-    background-color: red;
 }
 
 .data .properties {

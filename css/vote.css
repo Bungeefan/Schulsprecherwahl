@@ -1,4 +1,4 @@
-form > * {
+form > .voting {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
@@ -16,7 +16,6 @@ form .choice {
     min-width: 15em;
     border-radius: 25px;
     box-shadow: 5px 5px 20px black;
-
 }
 
 form .choice .candidate_name {
@@ -135,4 +134,18 @@ form .choice .runoff_checkbox:checked + svg path {
 
 form .choice .runoff_checkbox:checked + svg path:nth-child(2) {
     transition-delay: 230ms;
+}
+
+@media screen and (max-width: 400px) {
+
+    .choice {
+        margin: 0 0 1.5em;
+        padding: 0.5em;
+    }
+
+    .choice .candidate_name {
+        margin-top: 1em;
+        margin-bottom: 1em;
+    }
+
 }

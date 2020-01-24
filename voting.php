@@ -102,7 +102,7 @@ if (count($candidates) > 0 && $canContinue) {
 </head>
 <body>
 <main>
-    <div class="content">
+    <section>
         <h1 class="title"><?= $title ?></h1>
         <?php if (isset($errorMessage)) { ?>
             <div class="message error"><?= $errorMessage ?></div>
@@ -110,7 +110,7 @@ if (count($candidates) > 0 && $canContinue) {
         if (count($candidates) > 0) {
             if (!$canContinue) {
                 ?>
-                <form class="bigForm" id="voteForm" method="post">
+                <form class="big-form" id="voteForm" method="post">
                     <div class="voting">
                         <?php
                         foreach ($candidates as $candidate) {
@@ -156,7 +156,7 @@ if (count($candidates) > 0 && $canContinue) {
                             </div>
                         <?php } ?>
                     </div>
-                    <button class="style-btn" disabled id="voteBtn" type="submit">Wählen!</button>
+                    <button class="button" disabled id="voteBtn" type="submit">Wählen!</button>
                 </form>
                 <?php
             } else {
@@ -165,7 +165,7 @@ if (count($candidates) > 0 && $canContinue) {
                 <div class="text-center container">
                     <h2><?= $finishMessage ?></h2>
                 </div>
-                <a class="style-link bigForm" href="index.php">&#60; Zurück zum Beginn!</a>
+                <a class="button big" href="index.php">&#60; Zurück zum Beginn!</a>
                 <?php
             }
         } else {
@@ -173,9 +173,9 @@ if (count($candidates) > 0 && $canContinue) {
             <div class="text-center container">
                 <h2>Keine Kandidaten gefunden!</h2>
             </div>
-            <a class="style-link" href="index.php">&#60; Zurück zum Beginn!</a>
+            <a class="button" href="index.php">&#60; Zurück zum Beginn!</a>
         <?php } ?>
-    </div>
+    </section>
 </main>
 <?php include "php/footer.inc.php"; ?>
 <!-- Modal -->

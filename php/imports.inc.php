@@ -7,6 +7,7 @@
 
 <!--Styles-->
 <link href="/<?= PROJECT_PATH ?>/lib/css/bootstrap.4.3.1.min.css" rel="stylesheet" type="text/css">
+<link href="/<?= PROJECT_PATH ?>/css/message.css" rel="stylesheet" type="text/css">
 <link href="/<?= PROJECT_PATH ?>/css/base.css" rel="stylesheet" type="text/css">
 <style>
     /* roboto-regular - latin */

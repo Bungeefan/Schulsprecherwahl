@@ -9,7 +9,7 @@ $title = "Not supported by your browser - Schulsprecherwahl"
 </head>
 <body>
 <main>
-    <div class="content">
+    <section>
         <div class="text-center container">
             <h3>
                 Duh... <?= isset($browser) ? htmlspecialchars($browser) : "Your browser" ?> doesn't support this
@@ -18,6 +18,6 @@ $title = "Not supported by your browser - Schulsprecherwahl"
                 Thanks.
             </h4>
         </div>
-    </div>
+    </section>
 </main>
 </body>

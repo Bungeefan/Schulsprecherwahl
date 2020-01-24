@@ -9,7 +9,7 @@ $title = "Credits - Schulsprecherwahl"
 </head>
 <body>
 <main>
-    <div class="content">
+    <section>
         <h1 class="title"><?= $title ?></h1>
         <div class="text-center container">
             <h3>Icons</h3>
@@ -17,9 +17,9 @@ $title = "Credits - Schulsprecherwahl"
                 from
                 <a target="_blank" href="https://flaticon.com/" title="Flaticon">flaticon.com</a></div>
         </div>
-        <div class="btnGroup">
-            <button class="style-btn" onclick="window.close();">&#60; Zurück</button>
+        <div class="button-group">
+            <button class="button" onclick="window.close();">&#60; Zurück</button>
         </div>
-    </div>
+    </section>
 </main>
 </body>

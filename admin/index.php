@@ -7,46 +7,48 @@ require_once __DIR__ . "/php/admin_start.inc.php";
     <?php require_once "php/imports.inc.php"; ?>
     <script src="js/admin.js" defer></script>
     <link href="css/admin.css" rel="stylesheet" type="text/css">
+    <link href="css/admin_custom.css" rel="stylesheet" type="text/css">
+    <link href="css/loader.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 <main>
-    <div class="content">
-        <h1 class="title"><?= $title ?></h1>
-        <div id="loader" class="align-self-center lds-spinner" style="display: none;">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-        </div>
-        <div class="message success" id="messageOutput"></div>
-        <?php if (isset($errorMessage)) { ?>
-            <div class="message error"><?= $errorMessage ?></div>
-        <?php } ?>
-        <div class="container tab-content">
+    <section>
+        <div class="tab-content container">
+            <h1 class="title"><?= $title ?></h1>
+            <div id="loader" class="align-self-center lds-spinner" style="display: none;">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <div class="message success" id="messageOutput"></div>
+            <?php if (isset($errorMessage)) { ?>
+                <div class="message error"><?= $errorMessage ?></div>
+            <?php } ?>
             <ul class="nav tab-list" id="tabList" role="tablist">
                 <li class="tab-item">
-                    <a class="tab-link style-link active" id="candidates-tab" data-toggle="tab" href="#candidates"
+                    <a class="tab-link button active" id="candidates-tab" data-toggle="tab" href="#candidates"
                        role="tab"
                        aria-controls="kandidaten" aria-selected="true">Kandidaten</a>
                 </li>
                 <li class="tab-item">
-                    <a class="tab-link style-link" id="keys-tab" data-toggle="tab" href="#keys" role="tab"
+                    <a class="tab-link button" id="keys-tab" data-toggle="tab" href="#keys" role="tab"
                        aria-controls="keys" aria-selected="false">Keys</a>
                 </li>
                 <li class="tab-item">
-                    <a class="tab-link style-link" id="results-tab" data-toggle="tab" href="#results" role="tab"
+                    <a class="tab-link button" id="results-tab" data-toggle="tab" href="#results" role="tab"
                        aria-controls="ergebnisse" aria-selected="false">Ergebnisse</a>
                 </li>
                 <li class="tab-item">
-                    <a class="tab-link style-link" id="settings-tab" data-toggle="tab" href="#settings" role="tab"
+                    <a class="tab-link button" id="settings-tab" data-toggle="tab" href="#settings" role="tab"
                        aria-controls="einstellungen" aria-selected="false">Einstellungen</a>
                 </li>
             </ul>
@@ -97,23 +99,23 @@ require_once __DIR__ . "/php/admin_start.inc.php";
                                                placeholder="-" readonly/></label>
                                 </div>
                                 <div class="property">
-                                    <button class="style-btn" id="deleteCandidateImageBtn" type="submit">Bild
+                                    <button class="button" id="deleteCandidateImageBtn" type="submit">Bild
                                         löschen
                                     </button>
                                 </div>
                             </div>
-                            <div class="btnGroup">
-                                <button class="style-btn" id="saveCandidateBtn" formaction="api/candidate/update.php"
+                            <div class="button-group">
+                                <button class="button" id="saveCandidateBtn" formaction="api/candidate/update.php"
                                         type="submit">Kandidat speichern
                                 </button>
-                                <button class="style-btn" id="deleteCandidateBtn" formaction="api/candidate/delete.php"
+                                <button class="button" id="deleteCandidateBtn" formaction="api/candidate/delete.php"
                                         type="submit">Kandidat löschen
                                 </button>
                             </div>
                         </form>
                         <hr>
-                        <div class="btnGroup">
-                            <button class="style-btn" id="resetCandidatesBtn" formaction="api/reset.php?type=candidates"
+                        <div class="button-group">
+                            <button class="button" id="resetCandidatesBtn" formaction="api/reset.php?type=candidates"
                                     type="submit">Alle Kandidaten löschen
                             </button>
                         </div>
@@ -157,29 +159,29 @@ require_once __DIR__ . "/php/admin_start.inc.php";
                                                disabled>
                                         <span class="checkmark"></span>
                                     </label>
-                                    <button class="style-btn" id="deleteKeyVotesBtn" type="submit">Stimmen löschen
+                                    <button class="button" id="deleteKeyVotesBtn" type="submit">Stimmen löschen
                                     </button>
                                 </div>
                             </div>
-                            <div class="btnGroup">
-                                <button class="style-btn" id="saveKeyBtn" formaction="api/key/update.php" type="submit">
+                            <div class="button-group">
+                                <button class="button" id="saveKeyBtn" formaction="api/key/update.php" type="submit">
                                     Key speichern
                                 </button>
-                                <button class="style-btn" id="deleteKeyBtn" formaction="api/key/delete.php"
+                                <button class="button" id="deleteKeyBtn" formaction="api/key/delete.php"
                                         type="submit">Key löschen
                                 </button>
                             </div>
                         </form>
                         <hr>
-                        <div class="btnGroup">
-                            <button class="style-btn" id="resetKeysBtn" formaction="api/reset.php?type=keys"
+                        <div class="button-group">
+                            <button class="button" id="resetKeysBtn" formaction="api/reset.php?type=keys"
                                     type="submit">Alle Keys löschen
                             </button>
-                            <a class="style-link" href="api/key/download.php" download>Keys
+                            <a class="button" href="api/key/download.php" download>Keys
                                 exportieren</a>
                         </div>
-                        <div class="btnGroup">
-                            <button class="style-btn" id="generateKeysBtn" formaction="api/key/generate.php"
+                        <div class="button-group">
+                            <button class="button" id="generateKeysBtn" formaction="api/key/generate.php"
                                     type="submit">Neue Schlüssel generieren
                             </button>
                         </div>
@@ -192,10 +194,10 @@ require_once __DIR__ . "/php/admin_start.inc.php";
                         <div class="property">
                             <div id="resultsData"></div>
                         </div>
-                        <div class="btnGroup">
-                            <a class="style-link" href="api/results/download.php" download>Ergebnisse
+                        <div class="button-group">
+                            <a class="button" href="api/results/download.php" download>Ergebnisse
                                 exportieren</a>
-                            <button class="style-btn" id="resetVotesBtn" formaction="api/reset.php?type=votes"
+                            <button class="button" id="resetVotesBtn" formaction="api/reset.php?type=votes"
                                     type="submit">Alle Stimmen löschen
                             </button>
                         </div>
@@ -218,17 +220,17 @@ require_once __DIR__ . "/php/admin_start.inc.php";
                                     <span class="checkmark"></span>
                                 </label>
                             </div>
-                            <div class="btnGroup">
-                                <button class="style-btn" id="saveSettingsBtn" formaction="api/settings/update.php"
+                            <div class="button-group">
+                                <button class="button" id="saveSettingsBtn" formaction="api/settings/update.php"
                                         type="submit">Einstellungen speichern
                                 </button>
                             </div>
-                            <div class="btnGroup">
-                                <button class="style-btn" id="resetDatabaseBtn" formaction="api/database/create.php"
+                            <div class="button-group">
+                                <button class="button" id="resetDatabaseBtn" formaction="api/database/create.php"
                                         type="submit">Datenbank
                                     zurücksetzen/neu erstellen
                                 </button>
-                                <button class="style-btn" id="repairDatabaseBtn" formaction="api/database/repair.php"
+                                <button class="button" id="repairDatabaseBtn" formaction="api/database/repair.php"
                                         type="submit">Datenbank reparieren
                                 </button>
                             </div>
@@ -237,11 +239,11 @@ require_once __DIR__ . "/php/admin_start.inc.php";
                 </div>
             </div>
         </div>
-        <div class="btnGroup">
-            <a class="style-link" href="../index.php">&#60; Zurück zur Wahl</a>
-            <button class="style-btn" id="refreshBtn" type="button">Aktualisieren</button>
+        <div class="button-group">
+            <a class="button" href="../index.php">&#60; Zurück zur Wahl</a>
+            <button class="button" id="refreshBtn" type="button">Aktualisieren</button>
         </div>
-    </div>
+    </section>
 </main>
 <?php include "php/footer.inc.php"; ?>
 </body>
