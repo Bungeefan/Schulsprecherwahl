@@ -3,8 +3,6 @@ require_once "php/index_start.inc.php";
 global $database, $title;
 session_start();
 
-$statement = $database->getConnection()->query("SELECT * FROM `candidates_types` ORDER BY ID ASC");
-$candidates_types = $statement->fetchAll(PDO::FETCH_ASSOC);
 
 $loginEnabled = !isLoginDisabled();
 
@@ -21,6 +19,9 @@ if ($formWasSubmitted && !isset($_SESSION['key'])) {
 
         if ($loginEnabled) {
             if (!empty($key) && checkKey($key) && checkKeyVotes($key)) {
+                $statement = $database->getConnection()->query("SELECT * FROM `candidates_types` ORDER BY ID ASC");
+                $candidates_types = $statement->fetchAll(PDO::FETCH_ASSOC);
+
                 if (!empty($candidates_types)) {
                     $_SESSION['key'] = $key;
                     updateKeyUsedTime($key);
