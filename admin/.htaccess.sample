@@ -1,4 +1,4 @@
 AuthType Basic
 AuthName "Schulsprecherwahl Admin Panel"
-AuthUserFile /var/www/admin/.htpasswd
+AuthUserFile /var/www/html/admin/.htpasswd
 Require valid-user
