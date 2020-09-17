@@ -12,7 +12,7 @@ $data = (object)array_map(function ($v) {
     return trim(htmlspecialchars($v));
 }, $_POST);
 
-global $arr;
+global $arr, $database;
 if (checkDatabase($arr)) {
     if (
         !empty($data->firstName) &&
@@ -26,7 +26,9 @@ if (checkDatabase($arr)) {
             processImage($data, $imagePath, $message);
         }
 
-        $statement = $database->getConnection()->prepare("INSERT INTO `candidates` (`FirstName`, `LastName`, `AdditionalText`" . ($imageReceived ? " , `ImagePath`" : "") . ") VALUES (:firstName, :lastName, :additionalText" . ($imageReceived ? " , :imagePath" : "") . ")");
+        $statement = $database->getConnection()->prepare("INSERT INTO `candidates` (`CandidateType`, `Class`, `FirstName`, `LastName`, `AdditionalText`" . ($imageReceived ? " , `ImagePath`" : "") . ") VALUES (:candidateType, :class, :firstName, :lastName, :additionalText" . ($imageReceived ? " , :imagePath" : "") . ")");
+        $statement->bindValue(":candidateType", $data->candidateType, PDO::PARAM_INT);
+        $statement->bindValue(":class", $data->candidateClass, PDO::PARAM_STR);
         $statement->bindValue(":firstName", $data->firstName, PDO::PARAM_STR);
         $statement->bindValue(":lastName", $data->lastName, PDO::PARAM_STR);
         $statement->bindValue(":additionalText", $data->additionalText, PDO::PARAM_STR);

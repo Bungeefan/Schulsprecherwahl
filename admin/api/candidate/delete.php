@@ -8,7 +8,7 @@ $data = (object)array_map(function ($v) {
     return trim(htmlspecialchars($v));
 }, $data);
 
-global $arr;
+global $arr, $database;
 if (checkDatabase($arr)) {
     if (!empty($data->candidateID)) {
         $params = array(":candidateID" => $data->candidateID);

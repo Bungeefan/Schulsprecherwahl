@@ -7,8 +7,7 @@ $data = (object)array_map(function ($v) {
     return trim(htmlspecialchars($v));
 }, $_POST);
 
-global $arr;
-
+global $arr, $database;
 if (checkDatabase($arr)) {
     if (
         !empty($data->firstName) &&
@@ -22,7 +21,9 @@ if (checkDatabase($arr)) {
             processImage($data, $imagePath, $message);
         }
 
-        $statement = $database->getConnection()->prepare("UPDATE `candidates` SET FirstName = :firstName, LastName = :lastName, AdditionalText = :additionalText" . ($imageReceived ? " , ImagePath = :imagePath" : "") . " WHERE ID = :candidateID");
+        $statement = $database->getConnection()->prepare("UPDATE `candidates` SET CandidateType = :candidateType, Class = :class, FirstName = :firstName, LastName = :lastName, AdditionalText = :additionalText" . ($imageReceived ? " , ImagePath = :imagePath" : "") . " WHERE ID = :candidateID");
+        $statement->bindValue(":candidateType", $data->candidateType, PDO::PARAM_INT);
+        $statement->bindValue(":class", $data->candidateClass, PDO::PARAM_STR);
         $statement->bindValue(":candidateID", $data->candidateID, PDO::PARAM_INT);
         $statement->bindValue(":firstName", $data->firstName, PDO::PARAM_STR);
         $statement->bindValue(":lastName", $data->lastName, PDO::PARAM_STR);

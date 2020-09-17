@@ -1,8 +1,8 @@
 <?php
 require_once __DIR__ . "/../../../default_start.inc.php";
 
-const SAMPLE_CONFIG_FILE = "config.sample.inc.php";
-const CONFIG_FILE = "config.inc.php";
+const SAMPLE_CONFIG_FILE = __DIR__ . "/../../../config.sample.inc.php";
+const CONFIG_FILE = __DIR__ . "/../../../config.inc.php";
 
 if (file_exists(CONFIG_FILE)) {
     include_once CONFIG_FILE;

@@ -6,7 +6,7 @@ $data = (object)array_map(function ($v) {
     return trim(htmlspecialchars($v));
 }, $_POST);
 
-global $arr;
+global $arr, $database;
 if (checkDatabase($arr)) {
     if (isset($data->voteKey)) {
         $statement = $database->getConnection()->prepare("UPDATE `voting_keys` SET Blacklisted = " . (isset($data->blacklisted) ? "true" : "false") . ", Used = " . (isset($data->used) ? "NOW()" : "NULL") . " WHERE VoteKey IN (" . getQMarks($data->voteKey) . ")");

@@ -1,6 +1,5 @@
 <?php
 require_once __DIR__ . "/../../../default_start.inc.php";
-header("Content-Type: application/json; charset=UTF-8");
 
 function checkDatabase(&$arr)
 {
@@ -15,6 +14,7 @@ function checkDatabase(&$arr)
 
 function printResult($arr)
 {
+    header("Content-Type: application/json; charset=UTF-8");
     if (!isset($arr)) {
         http_response_code(400);
         $arr = array("message" => "Unable to perform action. Data is incomplete.");
@@ -25,6 +25,12 @@ function printResult($arr)
 function getQMarks(&$array)
 {
     $array = singeltonArray($array);
+
+    $func = function ($value) {
+        global $database;
+        return $database->getConnection()->quote($value);
+    };
+    array_map($func, $array);
     return join(",", array_fill(0, count($array), "?"));
 }
 

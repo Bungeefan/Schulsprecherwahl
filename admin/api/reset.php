@@ -6,7 +6,7 @@ $data = array();
 parse_str(file_get_contents("php://input"), $data);
 $data = (object)$data;
 
-global $arr;
+global $arr, $database, $intern_upload_folder;
 if (checkDatabase($arr)) {
     if (!empty($data->type)) {
         if ($data->type == "votes") {

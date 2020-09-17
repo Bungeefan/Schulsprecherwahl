@@ -1,16 +1,42 @@
 <?php
 require_once "php/index_start.inc.php";
+global $database, $title, $upload_folder, $intern_upload_folder;
 session_start();
-$runoff = isRunoff();
 $voteEnabled = !isVoteDisabled();
 
-if (!isset($_SESSION['key']) || !checkKeyVotes($runoff, $_SESSION['key'])) {
+if (!isset($_SESSION['key']) || !checkKeyVotes($_SESSION['key'])) {
     header("Location: index.php");
     die();
 }
 
-$statement = $database->getConnection()->query("SELECT * FROM `candidates` ORDER BY ID ASC");
+$statement = $database->getConnection()->query("SELECT * FROM `candidates_types` ORDER BY ID ASC");
+$candidates_types = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+$currentType = null;
+
+if (!isset($_REQUEST['type'])) {
+    header("Location: voting.php?type=" . $candidates_types[0]['ID']);
+    die();
+} else {
+    $currentType = null;
+    foreach ($candidates_types as $type) {
+        if ($type['ID'] == $_REQUEST['type']) {
+            $currentType = $type;
+            break;
+        }
+    }
+    $countedVotes = getKeyVotes($_SESSION['key']);
+    if ($currentType == null || array_search($currentType, $candidates_types) != $countedVotes) {
+        header("Location: voting.php?type=" . $candidates_types[$countedVotes]['ID']);
+        die();
+    }
+}
+
+
+$statement = getCandidates($currentType);
 $candidates = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+$runoff = count($candidates) <= 2;
 
 $maxPoints = min(6, count($candidates));
 
@@ -21,7 +47,7 @@ $votePoints = array();
 $preferenceVote = array();
 $finishMessage = "Danke fürs Wählen!";
 if ($formWasSubmitted) {
-    if (checkKey($_SESSION['key'], false) && checkKeyVotes($runoff, $_SESSION['key'])) {
+    if (checkKey($_SESSION['key'], false) && checkKeyVotes($_SESSION['key'])) {
         if ($voteEnabled) {
             foreach ($candidates as $candidate) {
                 if (!$runoff && isset($_POST['votePoints_' . $candidate['ID']])) {
@@ -42,12 +68,12 @@ if ($formWasSubmitted) {
                 }
             }
             if (!$runoff && count($candidates) != count($votePoints)) {
-                $errorMessage = "Die Kandidaten wurden geändert, es wurden keine Stimmen aufgezeichnet!";
                 $canContinue = false;
+                $errorMessage = "Die Kandidaten wurden geändert, es wurden keine Stimmen aufgezeichnet!";
             }
             if ($invalidInput) {
-                $errorMessage = "Ungültige Eingabe! Es wurden keine Stimmen aufgezeichnet!";
                 $canContinue = false;
+                $errorMessage = "Ungültige Eingabe! Es wurden keine Stimmen aufgezeichnet!";
             }
             if ($canContinue) {
                 if (!$runoff) {
@@ -77,6 +103,11 @@ if ($formWasSubmitted) {
                     $errorMessage = $e->getMessage();
                     $canContinue = false;
                 }
+
+                if (count($candidates_types) > $countedVotes + 1) {
+                    header("Location: voting.php?type=" . $candidates_types[$countedVotes + 1]['ID']);
+                    die();
+                }
             }
         } else {
             $canContinue = false;
@@ -88,6 +119,7 @@ if ($formWasSubmitted) {
 } else {
     $canContinue = false;
 }
+
 
 if (count($candidates) > 0 && $canContinue) {
     header("refresh:15;url=index.php");
@@ -104,6 +136,9 @@ if (count($candidates) > 0 && $canContinue) {
 <main>
     <section>
         <h1 class="title"><?= $title ?></h1>
+        <?php if (!$canContinue) { ?>
+            <h3 class="title"><?= $currentType['Type'] ?></h3>
+        <?php } ?>
         <?php if (isset($errorMessage)) { ?>
             <div class="message error"><?= $errorMessage ?></div>
         <?php }
@@ -148,7 +183,7 @@ if (count($candidates) > 0 && $canContinue) {
                                         <select name="votePoints_<?= $candidate['ID'] ?>" class="votes">
                                             <?php for ($j = 0; $j <= $maxPoints; $j++) { ?>
                                                 <option value="<?= $j ?>"
-                                                        <?= $j == 0 ? " selected" : "" ?>><?= $j ?></option>
+                                                    <?= $j == 0 ? " selected" : "" ?>><?= $j ?></option>
                                             <?php } ?>
                                         </select>
                                     </label>

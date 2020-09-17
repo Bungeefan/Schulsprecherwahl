@@ -8,11 +8,11 @@ if (checkDatabase($arr)) {
     $statement = getKeys();
 
     $statementSuccess = $statement->execute();
-    $outputString = "Key;Gesperrt;Benutzt;Abgestimmt\r\n";
+    $outputString = "Key;Klasse;Gesperrt;Benutzt;Abgestimmt\r\n";
     if ($statementSuccess) {
         http_response_code(200);
         foreach ($statement->fetchAll(PDO::FETCH_ASSOC) as $item) {
-            $outputString .= $item['VoteKey'] . ";" . $item['Blacklisted'] . ";" . ($item['Used'] ?? "Unbenutzt") . ";" . $item['Voted'] . "\r\n";
+            $outputString .= $item['VoteKey'] . ";" . $item['Class'] . ";" . $item['Blacklisted'] . ";" . ($item['Used'] ?? "Unbenutzt") . ";" . $item['Voted'] . "\r\n";
         }
         header("Content-Length: " . mb_strlen($outputString));
     } else {

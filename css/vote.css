@@ -37,39 +37,15 @@ form .choice .candidate_description:empty {
     display: none;
 }
 
-form .choice .candidate_picture_wrapper {
-    display: flex;
-    justify-content: center;
-    margin: 0.5em;
-
-    width: 12.5em;
-    height: 12.5em;
-    overflow: hidden;
-    border-radius: 50%;
-}
-
-form .choice img.candidate_picture {
-    width: 100%;
-    height: auto;
-    background-color: hsl(253, 24%, 10%);
-    line-height: 12;
-    text-align: center;
-}
-
-form .choice img.candidate_picture:not([src=""]) {
-    align-self: flex-start;
-}
-
-form .choice .candidate_picture {
-    flex-grow: 1;
-}
-
 form .choice .points {
     font-size: 1.8rem;
 }
 
 form .choice .votes {
     font-size: 2rem;
+    background-position: right .1em top 50%, 0 0;
+    background-size: .40em auto, 100%;
+    min-width: 1.8em;
 }
 
 form .choice .points, form .choice .votes {

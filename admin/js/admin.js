@@ -1,5 +1,5 @@
 "use strict";
-
+const baseUrl = 'admin/api';
 const activeTabKey = "activeTab";
 
 $(document).ready(function () {
@@ -59,19 +59,15 @@ function output(text, success = false) {
     }
 }
 
-function refreshAll(refreshData = true) {
-    refreshCandidates(refreshData);
-    refreshKeys(refreshData);
-    refreshResults();
-    refreshSettings();
-}
-
 //-----Candidates-----
 const candidateForm = $("#candidateForm");
 const selectCandidates = $("#candidateList");
 const candidatesCounter = $("#candidatesCounter");
 
 const idInput = $("#idInput");
+const candidatePicture = $("#candidatePicture");
+const candidateType = $("#candidateType");
+const candidateClass = $("#candidateClass");
 const firstNameInput = $("#firstNameInput");
 const lastNameInput = $("#lastNameInput");
 
@@ -88,6 +84,7 @@ const resetCandidatesBtn = $("#resetCandidatesBtn");
 
 //-----Keys-----
 const keysForm = $("#keysForm");
+const classList = $("#classList");
 const selectKeys = $("#keysList");
 const keysCounter = $("#keysCounter");
 const unusedKeysCounter = $("#unusedKeysCounter");
@@ -108,6 +105,7 @@ const resetKeysBtn = $("#resetKeysBtn");
 
 
 //-----Results-----
+const selectType = $("#typeList");
 const resultsData = $("#resultsData");
 const resetVotesBtn = $("#resetVotesBtn");
 
@@ -126,32 +124,37 @@ const repairDatabaseBtn = $("#repairDatabaseBtn");
 const refreshBtn = $("#refreshBtn");
 const loader = $("#loader");
 
+
 function getCurrentTab() {
     return $("ul#tabList li *.active");
 }
 
-function refreshTab(tab, refreshData = true) {
-    output(null);
+function refreshTab(tab, clearOutput = true) {
+    if (clearOutput) {
+        output(null);
+    }
     switch (tab.id) {
         case "candidates-tab":
-            refreshCandidates(refreshData);
+            fillTypeList(candidateType);
+            fillClassList(candidateClass);
+            refreshCandidates();
             break;
         case "keys-tab":
-            refreshKeys(refreshData);
+            fillClassList(classList);
             break;
         case "results-tab":
-            refreshResults();
+            fillTypeList(selectType);
             break;
         case "settings-tab":
             refreshSettings();
             break;
         default:
-            refreshAll(refreshData);
+            refreshCurrentTab();
     }
 }
 
-function refreshCurrentTab(refreshData = true) {
-    refreshTab(getCurrentTab()[0], refreshData);
+function refreshCurrentTab(clearOutput = true) {
+    refreshTab(getCurrentTab()[0], clearOutput);
 }
 
 $('a[data-toggle="tab"]').on("shown.bs.tab", function (e) {
@@ -170,7 +173,7 @@ if (refreshBtn) {
 }
 
 function init() {
-    refreshAll();
+    refreshCurrentTab();
     addReset(resetCandidatesBtn, "candidates");
     addReset(resetKeysBtn, "keys");
     addReset(resetVotesBtn, "votes");
@@ -204,6 +207,10 @@ function init() {
     if (selectKeys || keysCounter || unusedKeysCounter) {
         selectKeys.on("change", keysSelectionChanged);
     }
+
+    if (classList) {
+        classList.on("change", () => refreshKeys());
+    }
     if (saveKeyBtn) {
         saveKeyBtn.click(saveKeyAction);
     }
@@ -215,6 +222,10 @@ function init() {
     }
     if (generateKeysBtn) {
         generateKeysBtn.click(generateKeysAction);
+    }
+
+    if (selectType) {
+        selectType.on("change", () => refreshResults());
     }
 
     if (saveSettingsBtn) {
@@ -232,7 +243,7 @@ function init() {
 function deleteCandidateImageAction(event) {
     event.preventDefault();
     if (candidateImage.val().length > 0) {
-        if (confirm("Sind sie sicher? (Speichern nicht vergessen!)")) {
+        if (confirm("Sind Sie sicher? (Speichern nicht vergessen!)")) {
             candidateImage.val(null);
         }
     } else {
@@ -242,17 +253,20 @@ function deleteCandidateImageAction(event) {
 
 function saveCandidateAction(event) {
     event.preventDefault();
-    if (confirm("Sind sie sicher?")) {
+    if (confirm("Sind Sie sicher?")) {
         output(null);
-        if (firstNameInput[0].checkValidity() && lastNameInput[0].checkValidity()) {
+        if (candidateForm[0].checkValidity()/* && candidateType[0].checkValidity() && candidateClass[0].checkValidity() && lastNameInput[0].checkValidity()*/) {
             let data = new FormData(candidateForm[0]);
             let data_id = $("option:selected", selectCandidates).attr("data-id");
             if (data_id) {
                 data.set("candidateID", data_id);
             }
+            data.set("candidateType", $("option:selected", candidateType).attr("data-id"));
+            data.set("candidateClass", $("option:selected", candidateClass).attr("data-name"));
+
             output(null);
             $.ajax({
-                url: "api/candidate/" + (data_id ? "update.php" : "create.php"),
+                url: `${baseUrl}/candidate/${data_id ? "update.php" : "create.php"}`,
                 type: (data_id ? "POST" : "POST"),
                 data: data,
                 processData: false,
@@ -274,10 +288,10 @@ function deleteCandidateAction(event) {
     let optionSelected = $("option:selected", selectCandidates);
     let data_id = optionSelected.attr("data-id");
     if (data_id) {
-        if (confirm("Sind sie sicher, dass sie diesen Kandidaten löschen wollen?")) {
+        if (confirm("Sind Sie sicher, dass Sie diesen Kandidaten löschen wollen?")) {
             output(null);
             $.ajax({
-                url: "api/candidate/delete.php",
+                url: `${baseUrl}/candidate/delete.php`,
                 type: "DELETE",
                 data: {candidateID: data_id},
                 success: function (data, textStatus, xhr) {
@@ -298,7 +312,7 @@ function deleteCandidateAction(event) {
 
 let candidateSelection = null;
 
-function refreshCandidates(refreshData = true) {
+function refreshCandidates() {
     if (selectCandidates || candidatesCounter) {
         if (selectCandidates.val() && selectCandidates.val().length > 0) {
             candidateSelection = selectCandidates.val();
@@ -306,7 +320,7 @@ function refreshCandidates(refreshData = true) {
             candidateSelection = null;
         }
         $.ajax({
-            url: "api/candidate/get.php",
+            url: `${baseUrl}/candidate/get.php`,
             data: {minimized: "1"},
             success: function (data) {
                 if (candidatesCounter) {
@@ -320,25 +334,49 @@ function refreshCandidates(refreshData = true) {
                         optionElement.text(element.ID.padStart(2, "0") + ": " + element.FirstName + " " + element.LastName);
                         selectCandidates.append(optionElement);
                     });
-                    if (selectCandidates.prop("size") > 0) {
-                        if (candidateSelection != null) {
-                            selectCandidates.val(candidateSelection);
-                        } else {
-                            selectCandidates.prop("selectedIndex", false);
-                        }
-                    }
-                    if (refreshData) {
-                        selectCandidates.change();
-                    }
                 }
             },
             error: errorFunction,
         }).done(function () {
-            let optionElement = $("<option>");
-            optionElement.text("Neuen Kandidaten hinzufügen");
-            selectCandidates.append(optionElement);
+            if (selectCandidates) {
+                let optionElement = $("<option>");
+                optionElement.text("Neuen Kandidaten hinzufügen");
+                selectCandidates.append(optionElement);
+
+                selectLastOption(selectCandidates, candidateSelection);
+                selectCandidates.change();
+            }
         });
     }
+}
+
+let classSelection = null;
+
+function fillClassList(el) {
+    if (el.val() && el.val().length > 0) {
+        classSelection = el.val();
+    } else {
+        classSelection = null;
+    }
+    $.ajax({
+        url: `${baseUrl}/classes/get.php`,
+        success: function (data) {
+            if (el) {
+                el.empty();
+                data.forEach((element) => {
+                    let optionElement = $("<option>");
+                    optionElement.attr("data-name", element.Name);
+                    optionElement.attr("data-subject-area", element.SubjectArea);
+                    optionElement.text(element.Name + element.SubjectArea);
+                    el.append(optionElement);
+                });
+
+                selectLastOption(el, classSelection);
+                el.change();
+            }
+        },
+        error: errorFunction,
+    });
 }
 
 function candidatesSelectionChanged() {
@@ -346,6 +384,25 @@ function candidatesSelectionChanged() {
     function fillInputs(data) {
         if (idInput) {
             idInput.val(data && data[0].ID);
+        }
+        if (candidatePicture) {
+            candidatePicture.attr('src', (data && data[0].ImagePath || 'images/user.png'));
+        }
+        if (candidateType) {
+            if (data && data[0].CandidateType) {
+                candidateType.val(Array.from(candidateType[0].options)
+                    .find(value => $(value).attr("data-id") === data[0].CandidateType).text);
+            } else {
+                candidateType.prop("selectedIndex", false);
+            }
+        }
+        if (candidateClass) {
+            if (data && data[0].Class) {
+                candidateClass.val(data && data[0].Class && Array.from(candidateClass[0].options)
+                    .find(value => $(value).attr("data-name") === data[0].Class).text);
+            } else {
+                candidateClass.prop("selectedIndex", false);
+            }
         }
         if (firstNameInput) {
             firstNameInput.val(data && data[0].FirstName);
@@ -360,7 +417,7 @@ function candidatesSelectionChanged() {
             uploadInput.val(null);
         }
         if (candidateImage) {
-            candidateImage.val(data && data[0].ImagePath);
+            candidateImage.val(data && data[0].ImagePath?.split(/[\\\/]/).pop());
         }
     }
 
@@ -368,7 +425,7 @@ function candidatesSelectionChanged() {
     let data_id = optionSelected.attr("data-id");
     if (data_id) {
         $.ajax({
-            url: "api/candidate/get.php",
+            url: `${baseUrl}/candidate/get.php`,
             data: {candidateID: data_id},
             success: function (data) {
                 if (data && data.length > 0) {
@@ -384,7 +441,7 @@ function candidatesSelectionChanged() {
 
 let keysSelection = null;
 
-function refreshKeys(refreshData = true) {
+function refreshKeys() {
     if (selectKeys || keysCounter || unusedKeysCounter) {
         if (selectKeys.val() && selectKeys.val().length > 0) {
             keysSelection = selectKeys.val();
@@ -392,7 +449,7 @@ function refreshKeys(refreshData = true) {
             keysSelection = null;
         }
         $.ajax({
-            url: "api/key/get.php",
+            url: `${baseUrl}/key/get.php?class=${$("option:selected", classList).attr("data-name")}`,
             success: function (data) {
                 if (keysCounter) {
                     keysCounter.text(data.length);
@@ -417,16 +474,9 @@ function refreshKeys(refreshData = true) {
                         }
                         selectKeys.append(optionElement);
                     });
-                    if (selectKeys.prop("size") > 0) {
-                        if (keysSelection != null) {
-                            selectKeys.val(keysSelection);
-                        } else {
-                            selectKeys.prop("selectedIndex", false);
-                        }
-                    }
-                    if (refreshData) {
-                        selectKeys.change();
-                    }
+
+                    selectLastOption(selectKeys, keysSelection);
+                    selectKeys.change();
                 }
             },
             error: errorFunction,
@@ -460,7 +510,7 @@ function keysSelectionChanged() {
     let optionsSelected = selectKeys.val();
     if (optionsSelected.length > 0) {
         $.ajax({
-            url: "api/key/get.php",
+            url: `${baseUrl}/key/get.php`,
             type: "POST",
             data: {voteKey: optionsSelected},
             success: function (data, textStatus, xhr) {
@@ -479,12 +529,12 @@ function keysSelectionChanged() {
 
 function saveKeyAction(event) {
     event.preventDefault();
-    if (confirm("Sind sie sicher, dass sie alle markierten Keys speichern wollen?")) {
+    if (confirm("Sind Sie sicher, dass Sie alle markierten Keys speichern wollen?")) {
         let data = new FormData(keysForm[0]);
         data.set("voteKey", selectKeys.val());
         output(null);
         $.ajax({
-            url: "api/key/update.php",
+            url: `${baseUrl}/key/update.php`,
             type: "POST",
             data: data,
             processData: false,
@@ -500,12 +550,12 @@ function saveKeyAction(event) {
 
 function deleteKeyAction(event) {
     event.preventDefault();
-    if (confirm("Sind sie sicher, dass sie alle markierten Keys löschen wollen?")) {
+    if (confirm("Sind Sie sicher, dass Sie alle markierten Keys löschen wollen?")) {
         let data = new FormData(keysForm[0]);
         data.set("voteKey", selectKeys.val());
         output(null);
         $.ajax({
-            url: "api/key/delete.php",
+            url: `${baseUrl}/key/delete.php`,
             type: "POST",
             data: data,
             processData: false,
@@ -525,12 +575,12 @@ function deleteKeyAction(event) {
 
 function deleteKeyVotesAction(event) {
     event.preventDefault();
-    if (confirm("Sind sie sicher?")) {
+    if (confirm("Sind Sie sicher?")) {
         let data = new FormData(keysForm[0]);
         data.set("voteKey", selectKeys.val());
         output(null);
         $.ajax({
-            url: "api/key/deleteVotes.php",
+            url: `${baseUrl}/key/deleteVotes.php`,
             type: "POST",
             data: data,
             processData: false,
@@ -550,16 +600,18 @@ function deleteKeyVotesAction(event) {
 
 function generateKeysAction(event) {
     event.preventDefault();
-    let keysAmount = prompt("Wie viele Keys möchten sie generieren?", "30");
+
+    const selectedClass = $("option:selected", classList);
+    let keysAmount = prompt(`Wie viele Keys möchten Sie für '${selectedClass.text()}' generieren?`, "30");
     if (keysAmount != null) {
         output(null);
         if (loader) {
             loader.show();
         }
         $.ajax({
-            url: "api/key/generate.php",
+            url: `${baseUrl}/key/generate.php`,
             type: "POST",
-            data: {amount: keysAmount},
+            data: {amount: keysAmount, class: selectedClass.attr("data-name")},
             success: function (data, textStatus, xhr) {
                 if (xhr.status === 201) {
                     output(data.message, true);
@@ -573,54 +625,87 @@ function generateKeysAction(event) {
     }
 }
 
+let typeSelection = null;
+
+function fillTypeList(el) {
+    if (el.val() && el.val().length > 0) {
+        typeSelection = el.val();
+    } else {
+        typeSelection = null;
+    }
+    $.ajax({
+        url: `${baseUrl}/candidates_types/get.php`,
+        success: function (data) {
+            if (el) {
+                el.empty();
+                data.forEach((element) => {
+                    let optionElement = $("<option>");
+                    optionElement.attr("data-id", element.ID);
+                    optionElement.attr("data-type", element.Type);
+                    optionElement.text(element.Type);
+                    el.append(optionElement);
+                });
+
+                selectLastOption(el, typeSelection);
+                el.change();
+            }
+        },
+        error: errorFunction,
+    });
+}
+
 function refreshResults() {
     if (resultsData) {
         $.ajax({
-            url: "api/results/get.php",
-            success: function (data) {
+            url: `${baseUrl}/results/get.php`,
+            success: function (sourceData) {
                 if (resultsData) {
                     resultsData.empty();
-                    let keys = Object.keys(data);
-                    for (let i = 0; i < keys.length; i++) {
-                        const type = keys[i];
-                        let textTag = document.createElement("H3");
-                        textTag.appendChild(document.createTextNode(type));
-                        textTag.classList.add("table-header");
-                        resultsData.append(textTag);
-                        let tbl = document.createElement("table");
-                        tbl.classList.add("table");
-                        tbl.classList.add("table-dark");
-                        tbl.classList.add("table-bordered");
+                    const data = sourceData[$("option:selected", selectType).attr("data-type")]
 
-                        tbl.classList.add("table-striped");
-                        tbl.classList.add("table-hover");
+                    if (data) {
+                        let keys = Object.keys(data);
+                        for (let i = 0; i < keys.length; i++) {
+                            const type = keys[i];
+                            let textTag = document.createElement("h3");
+                            textTag.appendChild(document.createTextNode(type));
+                            textTag.classList.add("table-header");
+                            resultsData.append(textTag);
+                            let tbl = document.createElement("table");
+                            tbl.classList.add("table");
+                            tbl.classList.add("table-dark");
+                            tbl.classList.add("table-bordered");
 
-                        if (data[type].length > 0) {
-                            let thead = tbl.createTHead();
-                            let tr = thead.insertRow();
-                            for (const thKey of Object.keys(data[type][0])) {
-                                let th = tr.insertCell();
-                                th.appendChild(document.createTextNode(thKey));
-                                tr.appendChild(th);
-                            }
-                            thead.appendChild(tr);
-                            tbl.appendChild(thead);
+                            tbl.classList.add("table-striped");
+                            tbl.classList.add("table-hover");
 
-                            let tbody = tbl.createTBody();
-                            for (let i = 0; i < data[type].length; i++) {
-                                let tr = tbl.insertRow();
-                                for (const property of Object.keys(data[type][i])) {
-                                    let td = tr.insertCell();
-                                    td.appendChild(document.createTextNode(data[type][i][property]));
+                            if (data[type].length > 0) {
+                                let thead = tbl.createTHead();
+                                let tr = thead.insertRow();
+                                for (const thKey of Object.keys(data[type][0])) {
+                                    let th = tr.insertCell();
+                                    th.appendChild(document.createTextNode(thKey));
+                                    tr.appendChild(th);
                                 }
+                                thead.appendChild(tr);
+                                tbl.appendChild(thead);
+
+                                let tbody = tbl.createTBody();
+                                for (let i = 0; i < data[type].length; i++) {
+                                    let tr = tbl.insertRow();
+                                    for (const property of Object.keys(data[type][i])) {
+                                        let td = tr.insertCell();
+                                        td.appendChild(document.createTextNode(data[type][i][property]));
+                                    }
+                                }
+                                tbl.appendChild(tbody);
+                            } else {
+                                resultsData.append(document.createTextNode("Keine Daten verfügbar!"))
                             }
-                            tbl.appendChild(tbody);
-                        } else {
-                            resultsData.append(document.createTextNode("Keine Daten verfügbar!"))
-                        }
-                        resultsData.append(tbl);
-                        if (i + 1 < keys.length) {
-                            resultsData.append(document.createElement("hr"));
+                            resultsData.append(tbl);
+                            if (i + 1 < keys.length) {
+                                resultsData.append(document.createElement("hr"));
+                            }
                         }
                     }
                 }
@@ -632,11 +717,11 @@ function refreshResults() {
 
 function saveSettingsAction(event) {
     event.preventDefault();
-    if (confirm("Sind sie sicher?")) {
+    if (confirm("Sind Sie sicher?")) {
         let data = new FormData(settingsForm[0]);
         output(null);
         $.ajax({
-            url: "api/settings/update.php",
+            url: `${baseUrl}/settings/update.php`,
             type: "POST",
             data: data,
             processData: false,
@@ -653,7 +738,7 @@ function saveSettingsAction(event) {
 function refreshSettings() {
     if (loginDisabledCheckbox || voteDisabledCheckbox) {
         $.ajax({
-            url: "api/settings/get.php",
+            url: `${baseUrl}/settings/get.php`,
             success: function (data) {
                 if (loginDisabledCheckbox) {
                     loginDisabledCheckbox.prop("checked", data.loginDisabled);
@@ -668,37 +753,26 @@ function refreshSettings() {
 }
 
 function resetDatabaseAction(event) {
-    event.preventDefault();
-    if (confirm("Sind sie sicher?")) {
-        output(null);
-        if (loader) {
-            loader.show();
-        }
-        $.ajax({
-            url: "api/database/create.php",
-            type: "GET",
-            success: function (data, textStatus, xhr) {
-                output(data.message, xhr.status === 200);
-                refreshAll();
-            },
-            error: errorFunction,
-        });
-    }
+    doDatabaseAction("create", event);
 }
 
 function repairDatabaseAction(event) {
+    doDatabaseAction("repair", event);
+}
+
+function doDatabaseAction(filename, event) {
     event.preventDefault();
-    if (confirm("Sind sie sicher?")) {
+    if (confirm("Sind Sie sicher?")) {
         output(null);
         if (loader) {
             loader.show();
         }
         $.ajax({
-            url: "api/database/repair.php",
+            url: `${baseUrl}/database/${filename}.php`,
             type: "GET",
             success: function (data, textStatus, xhr) {
                 output(data.message, xhr.status === 200);
-                refreshAll();
+                refreshCurrentTab(false);
             },
             error: errorFunction,
         });
@@ -709,18 +783,18 @@ function addReset(resetBtn, voteType) {
     if (resetBtn) {
         resetBtn.click(function (event) {
             event.preventDefault();
-            if (confirm("Sind sie sicher, dass sie \"" + resetBtn[0].innerText + "\" ausführen wollen?")) {
+            if (confirm("Sind Sie sicher, dass Sie \"" + resetBtn[0].innerText + "\" ausführen wollen?")) {
                 output(null);
                 if (loader) {
                     loader.show();
                 }
                 $.ajax({
-                    url: "api/reset.php",
+                    url: `${baseUrl}/reset.php`,
                     type: "DELETE",
                     data: {type: voteType},
                     success: function (data, textStatus, xhr) {
                         output(data.message, xhr.status === 200);
-                        refreshAll();
+                        refreshCurrentTab(false);
                     },
                     error: function (xhr, textStatus, errorThrown) {
                         if (xhr.status === 428) {
@@ -732,6 +806,19 @@ function addReset(resetBtn, voteType) {
                 });
             }
         });
+    }
+}
+
+function selectLastOption(select, lastSelection) {
+    if (select[0].options.length > 0) {
+        if (lastSelection != null) {
+            select.val(lastSelection);
+            if (select.prop("selectedIndex") === -1) {
+                select.prop("selectedIndex", false);
+            }
+        } else {
+            select.prop("selectedIndex", false);
+        }
     }
 }
 

@@ -12,7 +12,9 @@ $title = "Credits - Schulsprecherwahl"
     <section>
         <h1 class="title"><?= $title ?></h1>
         <div class="text-center container">
-            <h3>Icons</h3>
+            <h3>Schulsprecher-Wahlsystem</h3>
+            <h5>Severin Hamader</h5>
+            <h3 style="padding-top: 1em">Icons</h3>
             <div>Avatar Icon made by <a target="_blank" href="https://flaticon.com/authors/freepik" title="Freepik">Freepik</a>
                 from
                 <a target="_blank" href="https://flaticon.com/" title="Flaticon">flaticon.com</a></div>

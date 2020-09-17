@@ -2,6 +2,16 @@
     --properties-padding-size: 0.5em;
 }
 
+.properties .property {
+    flex-grow: 1;
+    margin-bottom: 1em;
+}
+
+.data .properties .property {
+    flex-grow: 0;
+    margin-bottom: 0;
+}
+
 .data {
     display: flex;
     justify-content: space-between;
@@ -44,12 +54,12 @@
     margin-bottom: 0.25em;
 }
 
-.data select {
+select {
     flex-grow: 1;
     min-width: 14vw;
 }
 
-.data .properties {
+.properties {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -57,45 +67,45 @@
     flex-wrap: wrap;
 }
 
-.data .property > * {
+.property > * {
     margin: 0.1em 0;
 }
 
-.data .properties > label, .data .property > label {
+.properties > label, .property > label {
     font-size: 1.2em;
 }
 
-.data .properties label:not([for]) {
+.properties label:not([for]) {
     margin: 0;
 }
 
-.data .property label:not([for]) {
+.property label:not([for]) {
     font-size: 1em;
 }
 
-.data .property {
+.property {
     display: flex;
     justify-content: center;
     flex-direction: column;
 }
 
-.data .properties > *:not(:only-child) {
+.properties > *:not(:only-child) {
     margin: 0.5em 0;
 }
 
-.data .properties > *:not(:only-child):not(:last-child) {
+.properties > *:not(:only-child):not(:last-child) {
     margin-right: calc(var(--properties-padding-size) * 2);
 }
 
-.data .property.centered {
+.property.centered {
     align-items: center;
 }
 
-.data .property label.checkcontainer {
+.property label.checkcontainer {
     margin: 0.5em 0;
 }
 
-.data .property .checkcontainer {
+.property .checkcontainer {
     display: block;
     position: relative;
     padding-left: 35px;
@@ -105,18 +115,18 @@
     user-select: none;
 }
 
-.data .property .checkcontainer input {
+.property .checkcontainer input {
     position: absolute;
     opacity: 0;
     cursor: pointer;
 }
 
-.data .property .checkcontainer input:disabled ~ .checkmark {
+.property .checkcontainer input:disabled ~ .checkmark {
     background-color: hsl(0, 0%, 33%);
     cursor: default;
 }
 
-.data .property .checkmark {
+.property .checkmark {
     position: absolute;
     top: 0;
     left: 0;
@@ -125,33 +135,33 @@
     background-color: hsl(0, 0%, 93%);
 }
 
-.data .property .checkcontainer:hover input ~ .checkmark {
+.property .checkcontainer:hover input ~ .checkmark {
     background-color: hsl(0, 0%, 80%);
 }
 
-.data .property .checkcontainer:hover input:disabled ~ .checkmark {
+.property .checkcontainer:hover input:disabled ~ .checkmark {
     background-color: hsl(0, 0%, 20%);
 }
 
-.data .property .checkcontainer input:checked ~ .checkmark {
+.property .checkcontainer input:checked ~ .checkmark {
     background-color: hsl(207, 90%, 54%);
 }
 
-.data .property .checkcontainer input:checked:disabled ~ .checkmark {
+.property .checkcontainer input:checked:disabled ~ .checkmark {
     background-color: hsl(207, 90%, 30%);
 }
 
-.data .property .checkmark:after {
+.property .checkmark:after {
     content: "";
     position: absolute;
     display: none;
 }
 
-.data .property .checkcontainer input:checked ~ .checkmark:after {
+.property .checkcontainer input:checked ~ .checkmark:after {
     display: block;
 }
 
-.data .property .checkcontainer .checkmark:after {
+.property .checkcontainer .checkmark:after {
     left: 10px;
     top: 6px;
     width: 7px;
@@ -161,7 +171,7 @@
     transform: rotate(45deg);
 }
 
-.data .property .radiobtn {
+.property .radiobtn {
     position: absolute;
     top: 0;
     left: 0;
@@ -171,25 +181,25 @@
     border-radius: 50%;
 }
 
-.data .property .checkcontainer:hover input ~ .radiobtn {
+.property .checkcontainer:hover input ~ .radiobtn {
     background-color: #ccc;
 }
 
-.data .property .checkcontainer input:checked ~ .radiobtn {
+.property .checkcontainer input:checked ~ .radiobtn {
     background-color: #2196F3;
 }
 
-.data .property .radiobtn:after {
+.property .radiobtn:after {
     content: "";
     position: absolute;
     display: none;
 }
 
-.data .property .checkcontainer input:checked ~ .radiobtn:after {
+.property .checkcontainer input:checked ~ .radiobtn:after {
     display: block;
 }
 
-.data .property .checkcontainer .radiobtn:after {
+.property .checkcontainer .radiobtn:after {
     top: 9px;
     left: 9px;
     width: 8px;

@@ -1,10 +1,14 @@
 <?php
 require_once "php/index_start.inc.php";
+global $database, $title;
 session_start();
-$runoff = isRunoff();
+
+$statement = $database->getConnection()->query("SELECT * FROM `candidates_types` ORDER BY ID ASC");
+$candidates_types = $statement->fetchAll(PDO::FETCH_ASSOC);
+
 $loginEnabled = !isLoginDisabled();
 
-if (isset($_GET['logout']) || isset($_SESSION['key']) && !checkKeyVotes($runoff, $_SESSION['key'])) {
+if (isset($_GET['logout']) || isset($_SESSION['key']) && !checkKeyVotes($_SESSION['key'])) {
     logout($_SESSION['key']);
     header("Location: index.php");//reload
     die();
@@ -16,13 +20,15 @@ if ($formWasSubmitted && !isset($_SESSION['key'])) {
         $key = $_POST['key'];
 
         if ($loginEnabled) {
-            if (!empty($key)) {
-                if (checkKey($key) && checkKeyVotes($runoff, $key)) {
+            if (!empty($key) && checkKey($key) && checkKeyVotes($key)) {
+                if (!empty($candidates_types)) {
                     $_SESSION['key'] = $key;
                     updateKeyUsedTime($key);
                     session_regenerate_id();
-                    header("Location: voting.php");
+                    header("Location: voting.php?type=" . $candidates_types[0]->ID);
                     die();
+                } else {
+                    $errorMessage = "Es sind keine Wahlen definiert!";
                 }
             } else {
                 $errorMessage = "Dieser Key ist ungültig!";

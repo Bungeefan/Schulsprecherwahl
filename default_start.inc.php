@@ -1,8 +1,6 @@
 <?php
 ini_set('html_errors', false);
 define("PROJECT_PATH", str_replace($_SERVER["DOCUMENT_ROOT"] . "/", "", str_replace("\\", "/", __DIR__)));
-set_include_path(get_include_path() . PATH_SEPARATOR . PROJECT_PATH . PATH_SEPARATOR . __DIR__);
-chdir(__DIR__);
 
 $ua = htmlentities($_SERVER['HTTP_USER_AGENT'], ENT_QUOTES, 'UTF-8');
 if (basename($_SERVER["SCRIPT_FILENAME"], '.inc.php') != "not_supported" && (preg_match('~MSIE|Internet Explorer~i', $ua) || (strpos($ua, 'Trident/7.0') !== false && strpos($ua, 'rv:11.0') !== false))) {
@@ -13,7 +11,7 @@ if (basename($_SERVER["SCRIPT_FILENAME"], '.inc.php') != "not_supported" && (pre
 
 require_once __DIR__ . "/admin/api/config/database.php";
 
-$configFile = PROJECT_PATH . "/settings.cfg.json";
+$configFile = __DIR__ . "/settings.cfg.json";
 $config = new stdClass();
 $upload_folder = "uploads/files/";
 $intern_upload_folder = __DIR__ . "/" . $upload_folder;
@@ -21,18 +19,6 @@ $intern_upload_folder = __DIR__ . "/" . $upload_folder;
 $database = new Database();
 
 readConfig();
-
-function generateNumericOTP($n = 8)
-{
-    //all possible key chars without small l and big I
-    $generator = str_shuffle("0123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ");
-
-    $result = "";
-    for ($i = 1; $i <= $n; $i++) {
-        $result .= substr($generator, (rand() % (strlen($generator))), 1);
-    }
-    return $result;
-}
 
 function checkKey($key, $checkUsed = true)
 {
@@ -66,21 +52,31 @@ function checkKey($key, $checkUsed = true)
     return false;
 }
 
-function checkKeyVotes($runoff, $key)
+function checkKeyVotes($key)
 {
     global $errorMessage;
-    if (isset($key)) {
-        global $database;
-        $statement = $database->getConnection()->prepare("SELECT COUNT(*) FROM `" . (!$runoff ? "votes" : "votes_runoff") . "` WHERE VoteKey = :voteKey");
-        $statement->execute(array(':voteKey' => $key));
-        $result = $statement->fetchColumn();
-        if ($result == 0) {
-            return true;
-        } else {
-            $errorMessage = "Mit diesem Key wurde bereits abgestimmt!";
-        }
+    $result = getKeyVotes($key);
+    if ($result < 2) {
+        return true;
+    } else {
+        $errorMessage = "Mit diesem Key wurde bereits abgestimmt!";
     }
     return false;
+}
+
+function getKeyVotes($key)
+{
+    $result = 0;
+    if (isset($key)) {
+        global $database;
+        $statement = $database->getConnection()->prepare("SELECT COUNT(DISTINCT c.CandidateType) FROM `votes` v INNER JOIN candidates c on c.ID = v.CandidateID WHERE VoteKey = :voteKey");
+        $statement->execute(array(':voteKey' => $key));
+        $result = $statement->fetchColumn();
+        $statement = $database->getConnection()->prepare("SELECT COUNT(DISTINCT c.CandidateType) FROM `votes_runoff` v INNER JOIN candidates c on c.ID = v.CandidateID WHERE VoteKey = :voteKey");
+        $statement->execute(array(':voteKey' => $key));
+        $result += $statement->fetchColumn();
+    }
+    return $result;
 }
 
 function updateKeyUsedTime($key)
@@ -97,18 +93,33 @@ function logout($key)
     }
 }
 
-function isRunoff()
+function getCandidates($currentType)
 {
     global $database;
-    if ($database->isWorking()) {
-        $statement = $database->getConnection()->prepare("SELECT COUNT(*) FROM `candidates`");
-        $statement->execute();
-        $result = $statement->fetchColumn();
-        if ($result <= 2) {
-            return true;
-        }
+    if ($currentType['DependingOnClass']) {
+        $statement = $database->getConnection()->prepare("
+SELECT *
+FROM   `candidates` ca
+       INNER JOIN `classes` c
+               ON ca.Class = c.Name
+WHERE  CandidateType = :type
+       AND c.SubjectArea = (SELECT SubjectArea
+                            FROM   classes cla
+                                   INNER JOIN voting_keys k
+                                           ON cla.Name = k.Class
+                            WHERE  VoteKey = :key)
+ORDER  BY ID ASC
+");
+//    $statement = $database->getConnection()->prepare("SELECT * FROM `candidates` WHERE CandidateType = :type" .
+//        ($currentType['DependingOnClass'] ? " AND Class = " . $_SESSION['key']['Class'] : "") .
+//        " ORDER BY ID ASC");
+        $statement->bindValue(":key", $_SESSION['key'], PDO::PARAM_STR);
+    } else {
+        $statement = $database->getConnection()->prepare("SELECT * FROM `candidates` WHERE CandidateType = :type ORDER BY ID ASC");
     }
-    return false;
+    $statement->bindValue(":type", $currentType['ID'], PDO::PARAM_INT);
+    $statement->execute();
+    return $statement;
 }
 
 function isLoginDisabled()
@@ -139,8 +150,10 @@ function saveConfig()
 {
     global $configFile, $config;
     $openConfigFile = fopen($configFile, "w");
-    fwrite($openConfigFile, json_encode($config, JSON_PRETTY_PRINT));
-    fclose($openConfigFile);
+    if ($openConfigFile) {
+        fwrite($openConfigFile, json_encode($config, JSON_PRETTY_PRINT));
+        fclose($openConfigFile);
+    }
 }
 
 function readConfig()

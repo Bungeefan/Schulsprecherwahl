@@ -6,7 +6,7 @@ $data = (object)array_map(function ($v) {
     return trim(htmlspecialchars($v));
 }, $_POST);
 
-global $arr;
+global $arr, $database;
 if (checkDatabase($arr)) {
     if (!empty($data->voteKey)) {
         try {
