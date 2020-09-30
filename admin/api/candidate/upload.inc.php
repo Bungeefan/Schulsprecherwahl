@@ -5,7 +5,9 @@ function processReceivedImage(&$message)
 {
     global $intern_upload_folder;
     if (!file_exists($intern_upload_folder)) {
-        mkdir($intern_upload_folder, 0777, true);
+        if (!mkdir($intern_upload_folder, 0777, true)) {
+            $message = "Upload Ordner konnte nicht erstellt werden! " . error_get_last()['message'];
+        }
     }
     $fileName = pathinfo($_FILES['image']['name'], PATHINFO_FILENAME);
     $fileExtension = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
