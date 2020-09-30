@@ -8,7 +8,8 @@ Kompatibilität getestet mit: Chrome 77+, Firefox 69+
 * **2 Möglichkeiten, um _config.inc.php_ zu erstellen:**
     * Rechte des Deployment Ordners anpassen, damit PHP die Konfiguration automatisch verwalten kann (z.B.: `chmod 0777 Schulsprecherwahl/`)
     * _config.sample.inc.php_ zu _config.inc.php_ kopieren/umbenennen (z.B.: `cp config.sample.inc.php config.inc.php`)
-
+* **Rechte der Ordner berichtigen**
+    * Rechte des Upload Ordners anpassen, damit PHP die hochgeladenen Bilder verwalten kann (z.B.: `chmod 0777 Schulsprecherwahl/uploads`)
 * **Datenbank erstellen**
     * Um eine Datenbank generieren zu lassen, gehen Sie in das Adminpanel (`/admin`) -> Einstellungen -> "Datenbank zurücksetzen/neu erstellen"
 
