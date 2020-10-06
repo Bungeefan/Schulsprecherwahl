@@ -60,18 +60,24 @@ function getSumVotes($type)
                                       votes.VoteCount,
                                       COUNT(*)
                                FROM   votes
-                                      INNER JOIN candidates c
-                                              ON votes.CandidateID = c.ID
-                               WHERE  votes.VoteKey = v.VoteKey
-                                      AND c.CandidateType = :type
+                                      INNER JOIN candidates c3
+                                              ON votes.CandidateID = c3.ID
+                                      INNER JOIN candidates_types ctypes3
+                                              ON c3.CandidateType = ctypes3.ID
+                                      INNER JOIN classes class3
+                       						  ON c3.Class = class3.Name
+                               WHERE  votes.VoteKey = v.VoteKey AND c3.CandidateType = :type AND (ctypes3.DependingOnClass = 0 OR class3.SubjectArea = classes.SubjectArea)
                                GROUP  BY votes.VoteCount
                                HAVING COUNT(*) > 1
                                        OR ( votes.VoteCount = 0
                                             AND (SELECT COUNT(*)
-                                                 FROM   candidates
-                                                 WHERE  candidates.CandidateType = :type
-                                                ) <= 6
-                                          )
+                                                FROM   candidates c4
+                                                       INNER JOIN candidates_types ctypes4
+                                                         ON c4.CandidateType = ctypes4.ID
+                                                       INNER JOIN classes class4
+                                                         ON c4.Class = class4.Name
+                                                WHERE  c4.CandidateType = :type AND (ctypes4.DependingOnClass = 0 OR class4.SubjectArea = classes.SubjectArea))
+                                               <= 6 )
                                ORDER  BY NULL)
         GROUP  BY v.CandidateID
         ORDER  BY Stimmen DESC
@@ -101,25 +107,36 @@ function getFirstVoted($type)
                        ON c.Class = classes.Name
         WHERE  v.VoteCount = (SELECT MAX(votes.VoteCount)
                               FROM   votes
-                                     INNER JOIN candidates c
-                                             ON votes.CandidateID = c.ID
-                              WHERE  c.CandidateType = :type)
+                                     INNER JOIN candidates c2
+                                             ON votes.CandidateID = c2.ID
+                                     INNER JOIN candidates_types ctypes2
+                                             ON c2.CandidateType = ctypes2.ID
+                                     INNER JOIN classes class2
+                       						 ON c2.Class = class2.Name
+                              WHERE  c2.CandidateType = :type AND (ctypes2.DependingOnClass = 0 OR class2.SubjectArea = classes.SubjectArea))
                AND k.Blacklisted = 0
                AND c.CandidateType = :type
-               AND NOT EXISTS(SELECT votes.VoteKey,
+               AND NOT EXISTS (SELECT votes.VoteKey,
                                      votes.VoteCount,
                                      COUNT(*)
                               FROM   votes
-                                     INNER JOIN candidates c
-                                             ON votes.CandidateID = c.ID
-                              WHERE  votes.VoteKey = v.VoteKey
-                                     AND c.CandidateType = :type
+                                     INNER JOIN candidates c3
+                                             ON votes.CandidateID = c3.ID
+                                     INNER JOIN candidates_types ctypes3
+                                             ON c3.CandidateType = ctypes3.ID
+                                     INNER JOIN classes class3
+                       						 ON c3.Class = class3.Name
+                              WHERE  votes.VoteKey = v.VoteKey AND c3.CandidateType = :type AND (ctypes3.DependingOnClass = 0 OR class3.SubjectArea = classes.SubjectArea)
                               GROUP  BY votes.VoteCount
                               HAVING COUNT(*) > 1
                                       OR ( votes.VoteCount = 0
                                            AND (SELECT COUNT(*)
-                                                FROM   candidates
-                                                WHERE  candidates.CandidateType = :type)
+                                                FROM   candidates c4
+                                                       INNER JOIN candidates_types ctypes4
+                                                         ON c4.CandidateType = ctypes4.ID
+                                                       INNER JOIN classes class4
+                                                         ON c4.Class = class4.Name
+                                                WHERE  c4.CandidateType = :type AND (ctypes4.DependingOnClass = 0 OR class4.SubjectArea = classes.SubjectArea))
                                                <= 6 )
                               ORDER  BY NULL)
         GROUP  BY v.CandidateID
