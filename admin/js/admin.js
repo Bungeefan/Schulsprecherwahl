@@ -129,18 +129,18 @@ function getCurrentTab() {
     return $("ul#tabList li *.active");
 }
 
-function refreshTab(tab, clearOutput = true) {
+function refreshTab(tab, forceRefresh = true, clearOutput = true) {
     if (clearOutput) {
         output(null);
     }
     switch (tab.id) {
         case "candidates-tab":
             fillTypeList(candidateType);
-            fillClassList(candidateClass);
-            refreshCandidates();
+            fillClassList(candidateClass, forceRefresh);
+            refreshCandidates(forceRefresh);
             break;
         case "keys-tab":
-            fillClassList(classList);
+            fillClassList(classList, forceRefresh);
             break;
         case "results-tab":
             fillTypeList(selectType);
@@ -148,13 +148,11 @@ function refreshTab(tab, clearOutput = true) {
         case "settings-tab":
             refreshSettings();
             break;
-        default:
-            refreshCurrentTab();
     }
 }
 
-function refreshCurrentTab(clearOutput = true) {
-    refreshTab(getCurrentTab()[0], clearOutput);
+function refreshCurrentTab(forceRefresh = true, clearOutput = true) {
+    refreshTab(getCurrentTab()[0], forceRefresh, clearOutput);
 }
 
 $('a[data-toggle="tab"]').on("shown.bs.tab", function (e) {
@@ -163,7 +161,7 @@ $('a[data-toggle="tab"]').on("shown.bs.tab", function (e) {
 });
 
 setInterval(function () {
-    refreshCurrentTab(false);
+    refreshCurrentTab(false, false);
 }, 60 * 1000);
 
 if (refreshBtn) {
@@ -273,7 +271,7 @@ function saveCandidateAction(event) {
                 contentType: false,
                 success: function (data, textStatus, xhr) {
                     output(data.message, xhr.status === (data_id ? 200 : 201));
-                    refreshCandidates();
+                    refreshCandidates(true);
                 },
                 error: errorFunction,
             });
@@ -297,7 +295,7 @@ function deleteCandidateAction(event) {
                 success: function (data, textStatus, xhr) {
                     if (xhr.status === 200) {
                         output(data.message, xhr.status === 200);
-                        refreshCandidates();
+                        refreshCandidates(true);
                     } else {
                         output("Kandidat konnte nicht gelöscht werden!", false);
                     }
@@ -312,7 +310,7 @@ function deleteCandidateAction(event) {
 
 let candidateSelection = null;
 
-function refreshCandidates() {
+function refreshCandidates(forceRefresh) {
     if (selectCandidates || candidatesCounter) {
         if (selectCandidates.val() && selectCandidates.val().length > 0) {
             candidateSelection = selectCandidates.val();
@@ -344,7 +342,9 @@ function refreshCandidates() {
                 selectCandidates.append(optionElement);
 
                 selectLastOption(selectCandidates, candidateSelection);
-                selectCandidates.change();
+                if (forceRefresh) {
+                    selectCandidates.change();
+                }
             }
         });
     }
@@ -352,7 +352,7 @@ function refreshCandidates() {
 
 let classSelection = null;
 
-function fillClassList(el) {
+function fillClassList(el, forceRefresh) {
     if (el.val() && el.val().length > 0) {
         classSelection = el.val();
     } else {
@@ -372,7 +372,9 @@ function fillClassList(el) {
                 });
 
                 selectLastOption(el, classSelection);
-                el.change();
+                if (forceRefresh) {
+                    el.change();
+                }
             }
         },
         error: errorFunction,
@@ -794,7 +796,7 @@ function addReset(resetBtn, voteType) {
                     data: {type: voteType},
                     success: function (data, textStatus, xhr) {
                         output(data.message, xhr.status === 200);
-                        refreshCurrentTab(false);
+                        refreshCurrentTab(true, false);
                     },
                     error: function (xhr, textStatus, errorThrown) {
                         if (xhr.status === 428) {
