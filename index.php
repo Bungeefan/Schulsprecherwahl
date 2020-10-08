@@ -66,7 +66,7 @@ if ($formWasSubmitted && !isset($_SESSION['key'])) {
             </div>
         <?php } else { ?>
             <div class="text-center container">
-                <h3>Mit diesem Key wurde noch nicht gewählt!</h3>
+                <h3>Mit diesem Key wurde noch nicht (fertig) gewählt!</h3>
                 <p>Wenn du einen neuen Key eingibst wird dieser Key ungültig!</p>
             </div>
             <div class="button-group">
