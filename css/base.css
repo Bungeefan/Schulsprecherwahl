@@ -125,7 +125,6 @@ textarea {
 }
 
 input, textarea, .formSelect {
-    padding: 0.5em;
     text-align: center;
     border: solid 4px hsl(281, 86%, 28%);
 }
@@ -184,9 +183,8 @@ select {
     --select-background: hsl(253, 24%, 18%);
     /*background-image: var(--button-background);*/
 
-    appearance: button;
+    appearance: none;
 
-    /*border: unset;*/
     border: 2px solid hsl(253, 24%, 10%);
     border-radius: 5px;
     background-color: var(--select-background);
