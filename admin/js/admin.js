@@ -363,6 +363,14 @@ function fillClassList(el, forceRefresh) {
         success: function (data) {
             if (el) {
                 el.empty();
+
+                if (el === candidateClass) {
+                    let optionElement = $("<option>");
+                    optionElement.attr("disabled", true);
+                    optionElement.text("Klasse");
+                    el.append(optionElement);
+                }
+
                 data.forEach((element) => {
                     let optionElement = $("<option>");
                     optionElement.attr("data-name", element.Name);
@@ -400,7 +408,7 @@ function candidatesSelectionChanged() {
         }
         if (candidateClass) {
             if (data && data[0].Class) {
-                candidateClass.val(data && data[0].Class && Array.from(candidateClass[0].options)
+                candidateClass.val(Array.from(candidateClass[0].options)
                     .find(value => $(value).attr("data-name") === data[0].Class).text);
             } else {
                 candidateClass.prop("selectedIndex", false);
