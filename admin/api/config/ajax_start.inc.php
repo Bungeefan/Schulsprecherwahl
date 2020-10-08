@@ -1,6 +1,12 @@
 <?php
 require_once __DIR__ . "/../../../default_start.inc.php";
 
+set_exception_handler(function ($exception) {
+    http_response_code(500);
+    $arr = array("message" => "Error: " . $exception);
+    printResult($arr);
+});
+
 function checkDatabase(&$arr)
 {
     global $database;
