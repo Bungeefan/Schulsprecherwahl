@@ -38,7 +38,7 @@ $candidates = $statement->fetchAll(PDO::FETCH_ASSOC);
 
 $runoff = count($candidates) <= 2;
 
-$maxPoints = min(6, count($candidates));
+$maxPoints = count($candidates);
 
 $invalidInput = false;
 $canContinue = true;

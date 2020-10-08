@@ -1,7 +1,7 @@
 "use strict";
 
 const selects = $("form .choice select");
-const maxPoints = Math.min(6, selects.length);
+const maxPoints = selects.length;
 const checkboxes = $("form .choice input[type=checkbox]");
 
 const voteBtn = $("#voteBtn");
