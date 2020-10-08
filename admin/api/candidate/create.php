@@ -16,7 +16,9 @@ global $arr, $database;
 if (checkDatabase($arr)) {
     if (
         !empty($data->firstName) &&
-        !empty($data->lastName)
+        !empty($data->lastName) &&
+        !empty($data->candidateType) &&
+        !empty($data->candidateClass)
     ) {
         $message = "";
         $imagePath = true;
