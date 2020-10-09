@@ -367,7 +367,6 @@ function fillClassList(el, forceRefresh) {
                 if (el === candidateClass) {
                     let optionElement = $("<option>");
                     optionElement.attr("disabled", true);
-                    optionElement.text("Klasse");
                     el.append(optionElement);
                 }
 
