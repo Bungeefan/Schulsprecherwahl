@@ -152,19 +152,12 @@ if (count($candidates) > 0 && $canContinue) {
                             ?>
                             <div class="choice">
                                 <div class="candidate_picture_wrapper">
-                                    <?php
-                                    if (true) {
-                                        ?>
-                                        <img class="candidate_picture" alt="Kandidaten Bild"
-                                             src="<?php if (isset($candidate['ImagePath']) && file_exists($intern_upload_folder . $candidate['ImagePath'])) {
-                                                 echo $upload_folder . $candidate['ImagePath'];
-                                             } else {
-                                                 echo "images/user.png";
-                                             } ?>"
-                                        >
-                                    <?php } else { ?>
-                                        <div class="candidate_picture"></div>
-                                    <?php } ?>
+                                    <img class="candidate_picture" alt="Kandidaten Bild"
+                                         src="<?php if (isset($candidate['ImagePath']) && file_exists($intern_upload_folder . $candidate['ImagePath'])) {
+                                             echo $upload_folder . $candidate['ImagePath'];
+                                         } else {
+                                             echo "images/user.png";
+                                         } ?>">
                                 </div>
                                 <h1 class="candidate_name"><?= htmlspecialchars($candidate['FirstName'] . " " . $candidate['LastName']) ?></h1>
                                 <p class="candidate_description"><?= htmlspecialchars($candidate['AdditionalText']) ?></p>
