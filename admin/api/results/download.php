@@ -16,8 +16,10 @@ if (checkDatabase($arr)) {
             $outputString .= "Stimmen\r\n";
             $sumVotes = $result[array_keys($result)[0]];
             if (!empty($sumVotes)) {
-                $outputString .= implode(";", array_keys($sumVotes[0])) . "\r\n";
+                $keys = filterArray(array_keys($sumVotes[0]));
+                $outputString .= implode(";", $keys) . "\r\n";
                 foreach ($sumVotes as $item) {
+                    $item = filterArray($item, 2);
                     $outputString .= implode(";", $item) . "\r\n";
                 }
             }
@@ -25,8 +27,10 @@ if (checkDatabase($arr)) {
             $outputString .= "\r\n\r\nKandidat mit den meisten Erstreihungen\r\n";
             $firstVotes = $result[array_keys($result)[1]];
             if (!empty($firstVotes)) {
-                $outputString .= implode(";", array_keys($firstVotes[0])) . "\r\n";
+                $keys = filterArray(array_keys($firstVotes[0]));
+                $outputString .= implode(";", $keys) . "\r\n";
                 foreach ($firstVotes as $item) {
+                    $item = filterArray($item, 2);
                     $outputString .= implode(";", $item) . "\r\n";
                 }
             }
@@ -34,8 +38,10 @@ if (checkDatabase($arr)) {
             $outputString .= "\r\n\r\nStichwahl\r\n";
             $runoffVotes = $result[array_keys($result)[2]];
             if (!empty($runoffVotes)) {
-                $outputString .= implode(";", array_keys($runoffVotes[0])) . "\r\n";
+                $keys = filterArray(array_keys($runoffVotes[0]));
+                $outputString .= implode(";", $keys) . "\r\n";
                 foreach ($runoffVotes as $item) {
+                    $item = filterArray($item, 2);
                     $outputString .= implode(";", $item) . "\r\n";
                 }
             }
@@ -50,4 +56,9 @@ if (checkDatabase($arr)) {
     echo $outputString;
 } else {
     print_r($arr);
+}
+
+function filterArray($arr, $mode = 0): array
+{
+    return array_filter($arr, fn($k) => substr($k, 0, 1) !== "_", $mode);
 }

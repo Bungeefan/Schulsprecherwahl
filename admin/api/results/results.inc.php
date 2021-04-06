@@ -42,6 +42,7 @@ function getSumVotes($type)
         SELECT c.ID,
                ctypes.Type                               AS 'Typ',
                CONCAT(classes.Name, classes.SubjectArea) AS 'Klasse',
+               classes.SubjectArea                       AS '_SubjectArea',
                c.FirstName                               AS 'Vorname',
                c.LastName                                AS 'Nachname',
                SUM(v.VoteCount)                          AS 'Stimmen'
@@ -89,6 +90,7 @@ function getFirstVoted($type)
         SELECT c.ID,
                ctypes.Type                               AS 'Typ',
                CONCAT(classes.Name, classes.SubjectArea) AS 'Klasse',
+               classes.SubjectArea                       AS '_SubjectArea',
                c.FirstName                               AS 'Vorname',
                c.LastName                                AS 'Nachname',
                COUNT(v.VoteCount)                        AS 'Reihung'
@@ -148,6 +150,7 @@ function getRunoffVotes($type)
         SELECT c.ID,
                ctypes.Type                               AS 'Typ',
                CONCAT(classes.Name, classes.SubjectArea) AS 'Klasse',
+               classes.SubjectArea                       AS '_SubjectArea',
                c.FirstName                               AS 'Vorname',
                c.LastName                                AS 'Nachname',
                COUNT(candidateID)                        AS 'Stimmen'

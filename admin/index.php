@@ -223,6 +223,10 @@ global $title;
                         <label for="typeList">Wahl:</label>
                         <select class="formSelect" id="typeList"></select>
                     </div>
+                    <div class="property" style="display: none;">
+                        <label for="filterList">Filter:</label>
+                        <select class="formSelect" id="filterList"></select>
+                    </div>
                 </div>
                 <div class="data">
                     <div class="rightCard">

@@ -106,6 +106,7 @@ const resetKeysBtn = $("#resetKeysBtn");
 
 //-----Results-----
 const selectType = $("#typeList");
+const selectFilter = $("#filterList");
 const resultsData = $("#resultsData");
 const resetVotesBtn = $("#resetVotesBtn");
 
@@ -225,6 +226,9 @@ function init() {
     if (selectType) {
         selectType.on("change", () => refreshResults());
     }
+    if (selectFilter) {
+        selectFilter.on("change", () => refreshFilterResults());
+    }
 
     if (saveSettingsBtn) {
         saveSettingsBtn.click(saveSettingsAction)
@@ -326,7 +330,7 @@ function refreshCandidates(forceRefresh) {
                 }
                 if (selectCandidates) {
                     selectCandidates.empty();
-                    data.forEach((element) => {
+                    data.forEach(element => {
                         let optionElement = $("<option>");
                         optionElement.attr("data-id", element.ID);
                         optionElement.text(element.ID.padStart(2, "0") + ": " + element.FirstName + " " + element.LastName);
@@ -370,7 +374,7 @@ function fillClassList(el, forceRefresh) {
                     el.append(optionElement);
                 }
 
-                data.forEach((element) => {
+                data.forEach(element => {
                     let optionElement = $("<option>");
                     optionElement.attr("data-name", element.Name);
                     optionElement.attr("data-subject-area", element.SubjectArea);
@@ -647,10 +651,11 @@ function fillTypeList(el) {
         success: function (data) {
             if (el) {
                 el.empty();
-                data.forEach((element) => {
+                data.forEach(element => {
                     let optionElement = $("<option>");
                     optionElement.attr("data-id", element.ID);
                     optionElement.attr("data-type", element.Type);
+                    optionElement.attr("data-class-dependent", element.DependingOnClass);
                     optionElement.text(element.Type);
                     el.append(optionElement);
                 });
@@ -663,6 +668,54 @@ function fillTypeList(el) {
     });
 }
 
+function initTables(data) {
+    let headerKeys = Object.keys(data);
+    for (let i = 0; i < headerKeys.length; i++) {
+        const header = headerKeys[i];
+        let textTag = document.createElement("h3");
+        textTag.appendChild(document.createTextNode(header));
+        textTag.classList.add("table-header");
+        resultsData.append(textTag);
+        let tbl = document.createElement("table");
+        tbl.classList.add("table");
+        tbl.classList.add("table-dark");
+        tbl.classList.add("table-bordered");
+
+        tbl.classList.add("table-striped");
+        tbl.classList.add("table-hover");
+
+        if (data[header].length > 0) {
+            let thead = tbl.createTHead();
+            let tr = thead.insertRow();
+            for (const thKey of Object.keys(data[header][0])) {
+                if (thKey.startsWith("_")) continue;
+                let th = tr.insertCell();
+                th.appendChild(document.createTextNode(thKey));
+                tr.appendChild(th);
+            }
+            thead.appendChild(tr);
+            tbl.appendChild(thead);
+
+            let tbody = tbl.createTBody();
+            for (let i = 0; i < data[header].length; i++) {
+                let tr = tbl.insertRow();
+                for (const property of Object.keys(data[header][i])) {
+                    if (property.startsWith("_")) continue;
+                    let td = tr.insertCell();
+                    td.appendChild(document.createTextNode(data[header][i][property]));
+                }
+            }
+            tbl.appendChild(tbody);
+        } else {
+            resultsData.append(document.createTextNode("Keine Daten verfügbar!"))
+        }
+        resultsData.append(tbl);
+        if (i + 1 < headerKeys.length) {
+            resultsData.append(document.createElement("hr"));
+        }
+    }
+}
+
 function refreshResults() {
     if (resultsData) {
         $.ajax({
@@ -670,52 +723,74 @@ function refreshResults() {
             success: function (sourceData) {
                 if (resultsData) {
                     resultsData.empty();
-                    const data = sourceData[$("option:selected", selectType).attr("data-type")]
+                    const selectedType = $("option:selected", selectType);
+                    const data = sourceData[selectedType.attr("data-type")];
+                    const classDependent = selectedType.attr("data-class-dependent");
 
                     if (data) {
-                        let keys = Object.keys(data);
-                        for (let i = 0; i < keys.length; i++) {
-                            const type = keys[i];
-                            let textTag = document.createElement("h3");
-                            textTag.appendChild(document.createTextNode(type));
-                            textTag.classList.add("table-header");
-                            resultsData.append(textTag);
-                            let tbl = document.createElement("table");
-                            tbl.classList.add("table");
-                            tbl.classList.add("table-dark");
-                            tbl.classList.add("table-bordered");
-
-                            tbl.classList.add("table-striped");
-                            tbl.classList.add("table-hover");
-
-                            if (data[type].length > 0) {
-                                let thead = tbl.createTHead();
-                                let tr = thead.insertRow();
-                                for (const thKey of Object.keys(data[type][0])) {
-                                    let th = tr.insertCell();
-                                    th.appendChild(document.createTextNode(thKey));
-                                    tr.appendChild(th);
-                                }
-                                thead.appendChild(tr);
-                                tbl.appendChild(thead);
-
-                                let tbody = tbl.createTBody();
-                                for (let i = 0; i < data[type].length; i++) {
-                                    let tr = tbl.insertRow();
-                                    for (const property of Object.keys(data[type][i])) {
-                                        let td = tr.insertCell();
-                                        td.appendChild(document.createTextNode(data[type][i][property]));
-                                    }
-                                }
-                                tbl.appendChild(tbody);
-                            } else {
-                                resultsData.append(document.createTextNode("Keine Daten verfügbar!"))
+                        if (+classDependent) {
+                            if (selectFilter) {
+                                fillFilter(data);
+                                selectFilter.parent().show();
                             }
-                            resultsData.append(tbl);
-                            if (i + 1 < keys.length) {
-                                resultsData.append(document.createElement("hr"));
+                        } else {
+                            initTables(data);
+                            if (selectFilter) {
+                                selectFilter.parent().hide();
                             }
                         }
+                    }
+                }
+            },
+            error: errorFunction,
+        });
+    }
+}
+
+function fillFilter() {
+    $.ajax({
+        url: `${baseUrl}/subject_areas/get.php`,
+        success: function (data) {
+            selectFilter.empty();
+            data.forEach(element => {
+                let optionElement = $("<option>");
+                optionElement.attr("data-subject-area", element);
+                optionElement.text(element);
+                selectFilter.append(optionElement);
+            });
+
+            selectLastOption(selectFilter, typeSelection);
+            selectFilter.change();
+        },
+        error: errorFunction,
+    });
+}
+
+function refreshFilterResults() {
+    if (resultsData) {
+        $.ajax({
+            url: `${baseUrl}/results/get.php`,
+            success: function (sourceData) {
+                if (resultsData) {
+                    resultsData.empty();
+                    const data = sourceData[$("option:selected", selectType).attr("data-type")];
+                    const selectedSubjectArea = $("option:selected", selectFilter).attr("data-subject-area");
+
+                    if (data) {
+                        let headerKeys = Object.keys(data);
+                        for (let i = 0; i < headerKeys.length; i++) {
+                            const header = headerKeys[i];
+                            data[header] = data[header].filter(x => {
+                                for (const property of Object.keys(x)) {
+                                    if (property.startsWith("_")) {
+                                        let val = x[property];
+                                        if (val === selectedSubjectArea) return true;
+                                    }
+                                }
+                                return false;
+                            });
+                        }
+                        initTables(data);
                     }
                 }
             },
