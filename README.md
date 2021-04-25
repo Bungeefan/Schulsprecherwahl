@@ -6,12 +6,19 @@ Kompatibilität getestet mit: Chrome 77+, Firefox 69+
 
 ### Allgemeine Konfiguration
 * **2 Möglichkeiten, um _config.inc.php_ zu erstellen:**
-    * Rechte des Deployment Ordners anpassen, damit PHP die Konfiguration automatisch verwalten kann (z.B.: `chmod 0777 Schulsprecherwahl/`)
-    * _config.sample.inc.php_ zu _config.inc.php_ kopieren/umbenennen (z.B.: `cp config.sample.inc.php config.inc.php`)
+  * Rechte des Deployment Ordners anpassen, damit PHP die Konfiguration automatisch verwalten
+    kann (`chmod -R 0777 Schulsprecherwahl/`)
+  * _config.sample.inc.php_ zu _config.inc.php_ kopieren/umbenennen\
+    (`cp config.sample.inc.php config.inc.php`)
 * **Rechte der Ordner berichtigen**
-    * Rechte des Upload Ordners anpassen, damit PHP die hochgeladenen Bilder verwalten kann (z.B.: `chmod 0777 Schulsprecherwahl/uploads`)
+  * Rechte des Upload Ordners anpassen, damit PHP die hochgeladenen Bilder verwalten kann\
+    (`chmod -R 0777 Schulsprecherwahl/uploads`)
+  * Rechte der Konfigurationsdatei anpassen, damit PHP die Einstellungen (letzter Tab) speichern und lesen kann. Es kann
+    sein das PHP die Datei zuerst erstellen muss.\
+    (`chmod 0777 Schulsprecherwahl/settings.cfg.json`)
 * **Datenbank erstellen**
-    * Um eine Datenbank generieren zu lassen, gehen Sie in das Adminpanel (`/admin`) -> Einstellungen -> "Datenbank zurücksetzen/neu erstellen"
+  * Um eine Datenbank generieren zu lassen, gehen Sie in das Adminpanel (`/admin`) -> Einstellungen -> "Datenbank
+    zurücksetzen/neu erstellen"
 
 ### Absichern des Admin Panels
 1. Überprüfung ihrer [_.htaccess_ Konfiguration](http://httpd.apache.org/docs/current/mod/core.html#allowoverride)
