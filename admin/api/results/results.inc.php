@@ -77,7 +77,7 @@ function getSumVotes($type)
                                        OR votes.VoteCount = 0
                                ORDER  BY NULL)
         GROUP  BY v.CandidateID
-        ORDER  BY Stimmen DESC
+        ORDER  BY Stimmen DESC, c.ID
     ");
     $statement->bindValue(':type', $type['ID'], PDO::PARAM_INT);
     return $statement;
@@ -137,7 +137,7 @@ function getFirstVoted($type)
                                        OR votes.VoteCount = 0
                                ORDER  BY NULL)
         GROUP  BY v.CandidateID
-        ORDER  BY Reihung DESC
+        ORDER  BY Reihung DESC, c.ID
     ");
     $statement->bindValue(':type', $type['ID'], PDO::PARAM_INT);
     return $statement;
@@ -183,7 +183,7 @@ function getRunoffVotes($type)
                                HAVING COUNT(*) > 1
                                ORDER  BY NULL)
         GROUP  BY vr.CandidateID
-        ORDER  BY Stimmen DESC
+        ORDER  BY Stimmen DESC, c.ID
     ");
     $statement->bindValue(':type', $type['ID'], PDO::PARAM_INT);
     return $statement;
