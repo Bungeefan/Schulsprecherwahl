@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS `candidates_types`
 -- Daten für Tabelle `candidates_types`
 --
 
-INSERT INTO `candidates_types` (`ID`, `Type`, `DependingOnClass`)
+INSERT IGNORE INTO `candidates_types` (`ID`, `Type`, `DependingOnClass`)
 VALUES (1, 'Schulsprecher', 0),
        (2, 'Abteilungssprecher', 1);
 
@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS `classes`
 -- Daten für Tabelle `classes`
 --
 
-INSERT INTO `classes` (`Name`, `SubjectArea`)
+INSERT IGNORE INTO `classes` (`Name`, `SubjectArea`)
 VALUES ('1', 'AHBGM'),
        ('1A', 'HIF'),
        ('1B', 'HIF'),
