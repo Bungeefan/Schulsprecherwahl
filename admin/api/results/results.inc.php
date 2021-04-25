@@ -40,12 +40,59 @@ function getSumVotes($type)
     global $database;
     $statement = $database->getConnection()->prepare("
         SELECT c.ID,
-               ctypes.Type                               AS 'Typ',
-               CONCAT(classes.Name, classes.SubjectArea) AS 'Klasse',
-               classes.SubjectArea                       AS '_SubjectArea',
-               c.FirstName                               AS 'Vorname',
-               c.LastName                                AS 'Nachname',
-               SUM(v.VoteCount)                          AS 'Stimmen'
+               ctypes.Type                                AS 'Typ',
+               CONCAT(classes.Name, classes.SubjectArea)  AS 'Klasse',
+               classes.SubjectArea                        AS '_SubjectArea',
+               c.FirstName                                AS 'Vorname',
+               c.LastName                                 AS 'Nachname',
+               SUM(v.VoteCount)                           AS 'Stimmen',
+               COALESCE((SELECT COUNT(vot.VoteCount)
+                         FROM   votes vot
+                                INNER JOIN voting_keys ke
+                                        ON vot.VoteKey = ke.VoteKey
+                         WHERE  vot.VoteCount = (SELECT MAX(votes.VoteCount)
+                                                 FROM   votes
+                                                        INNER JOIN candidates c2
+                                                                ON votes.CandidateID =
+                                                                   c2.ID
+                                                        INNER JOIN candidates_types
+                                                                   ctypes2
+                                                                ON c2.CandidateType =
+                                                                   ctypes2.ID
+                                                        INNER JOIN classes class2
+                                                                ON c2.Class =
+                                                                   class2.Name
+                                                 WHERE  c2.CandidateType = :type
+                                                        AND ( ctypes2.DependingOnClass =
+                                                              0
+                                                               OR class2.SubjectArea =
+                                                                  classes.SubjectArea ))
+                                AND ke.Blacklisted = 0
+                                AND vot.CandidateID = c.ID
+                                AND NOT EXISTS (SELECT votes.VoteKey,
+                                                       votes.VoteCount,
+                                                       COUNT(*)
+                                                FROM   votes
+                                                       INNER JOIN candidates c3
+                                                               ON votes.CandidateID =
+                                                                  c3.ID
+                                                       INNER JOIN candidates_types
+                                                                  ctypes3
+                                                               ON c3.CandidateType =
+                                                                  ctypes3.ID
+                                                       INNER JOIN classes class3
+                                                               ON c3.Class = class3.Name
+                                                WHERE  votes.VoteKey = vot.VoteKey
+                                                       AND c3.CandidateType = :type
+                                                       AND ( ctypes3.DependingOnClass =
+                                                             0
+                                                              OR class3.SubjectArea =
+                                                                 classes.SubjectArea )
+                                                GROUP  BY votes.VoteCount
+                                                HAVING COUNT(*) > 1
+                                                        OR votes.VoteCount = 0
+                                                ORDER  BY NULL)
+                         GROUP  BY vot.CandidateID), '0') AS 'Erstreihungen'
         FROM   votes v
                INNER JOIN candidates c
                        ON v.CandidateID = c.ID
@@ -77,7 +124,7 @@ function getSumVotes($type)
                                        OR votes.VoteCount = 0
                                ORDER  BY NULL)
         GROUP  BY v.CandidateID
-        ORDER  BY Stimmen DESC, c.ID
+        ORDER  BY Erstreihungen DESC, Stimmen DESC, c.ID
     ");
     $statement->bindValue(':type', $type['ID'], PDO::PARAM_INT);
     return $statement;
