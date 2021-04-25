@@ -25,38 +25,36 @@ function printResult($arr)
         http_response_code(400);
         $arr = array("message" => "Unable to perform action. Data is incomplete.");
     }
-    echo json_encode($arr, JSON_PRETTY_PRINT);
+    echo json_encode($arr, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
 }
 
 function getQMarks(&$array)
 {
     $array = singeltonArray($array);
 
-    $func = function ($value) {
+    $func = static function ($value) {
         global $database;
         return $database->getConnection()->quote($value);
     };
     array_map($func, $array);
-    return join(",", array_fill(0, count($array), "?"));
+    return implode(",", array_fill(0, count($array), "?"));
 }
 
 function bindArray($statement, &$array)
 {
     $array = singeltonArray($array);
-    for ($i = 0; $i < count($array); $i++) {
-        $statement->bindValue($i + 1, $array[$i]);
+    foreach ($array as $i => $value) {
+        $statement->bindValue($i + 1, $value);
     }
 }
 
 function singeltonArray($value)
 {
-    if (!empty($value)) {
-        if (!is_array($value)) {
-            if (is_string($value)) {
-                $value = explode(",", $value);
-            } else {
-                $value = (array)$value;
-            }
+    if (!empty($value) && !is_array($value)) {
+        if (is_string($value)) {
+            $value = explode(",", $value);
+        } else {
+            $value = (array)$value;
         }
     }
     return $value;

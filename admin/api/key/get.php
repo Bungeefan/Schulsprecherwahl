@@ -3,7 +3,7 @@ require_once "keys.inc.php";
 
 global $arr;
 if (checkDatabase($arr)) {
-    $statement = getKeys(isset($_REQUEST['voteKey']) ? $_REQUEST['voteKey'] : null, isset($_REQUEST['class']) ? $_REQUEST['class'] : null);
+    $statement = getKeys($_REQUEST['voteKey'] ?? null, $_REQUEST['class'] ?? null);
 
     if ($statement->execute()) {
         http_response_code(200);

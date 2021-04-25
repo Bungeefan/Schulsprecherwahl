@@ -5,7 +5,7 @@ $sqlCreateFile = __DIR__ . "/../config/voting_system_repair.sql";
 global $arr, $database;
 if (file_exists($sqlCreateFile)) {
     $result = $database->getConnection()->exec(implode("\n", array_filter(file($sqlCreateFile), function ($line) {
-        return strpos($line, "-") === false;
+        return !str_contains($line, "-");
     })));
     if ($result !== false) {
         http_response_code(200);

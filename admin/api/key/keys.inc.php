@@ -32,7 +32,7 @@ function generateNumericOTP($n = 8)
 
     $result = "";
     for ($i = 1; $i <= $n; $i++) {
-        $result .= substr($generator, (rand() % (strlen($generator))), 1);
+        $result .= $generator[(mt_rand() % (strlen($generator)))];
     }
     return $result;
 }

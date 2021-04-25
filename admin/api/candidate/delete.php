@@ -9,19 +9,17 @@ $data = (object)array_map(function ($v) {
 }, $data);
 
 global $arr, $database;
-if (checkDatabase($arr)) {
-    if (!empty($data->candidateID)) {
-        $params = array(":candidateID" => $data->candidateID);
-        $imageDeleted = deleteOldImage($data->candidateID);
+if (!empty($data->candidateID) && checkDatabase($arr)) {
+    $params = array(":candidateID" => $data->candidateID);
+    $imageDeleted = deleteOldImage($data->candidateID);
 
-        $statement = $database->getConnection()->prepare("DELETE FROM `candidates` WHERE ID = :candidateID");
-        if ($statement->execute($params)) {
-            http_response_code(200);
-            $arr = array("message" => "Kandidat (ID: $data->candidateID) wurde gelöscht.");
-        } else {
-            http_response_code(503);
-            $arr = array("message" => "Kandidat (ID: $data->candidateID) konnte nicht gelöscht werden.");
-        }
+    $statement = $database->getConnection()->prepare("DELETE FROM `candidates` WHERE ID = :candidateID");
+    if ($statement->execute($params)) {
+        http_response_code(200);
+        $arr = array("message" => "Kandidat (ID: $data->candidateID) wurde gelöscht.");
+    } else {
+        http_response_code(503);
+        $arr = array("message" => "Kandidat (ID: $data->candidateID) konnte nicht gelöscht werden.");
     }
 }
 

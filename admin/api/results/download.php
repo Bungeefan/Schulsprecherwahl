@@ -8,7 +8,7 @@ if (checkDatabase($arr)) {
     $results = getResults();
 
     $outputString = "";
-    if ($results != null) {
+    if ($results !== null) {
         http_response_code(200);
         foreach ($results as $key => $result) {
             $outputString .= "$key\r\n\r\n";
@@ -60,5 +60,5 @@ if (checkDatabase($arr)) {
 
 function filterArray($arr, $mode = 0): array
 {
-    return array_filter($arr, fn($k) => substr($k, 0, 1) !== "_", $mode);
+    return array_filter($arr, static fn($k) => !str_starts_with($k, "_"), $mode);
 }

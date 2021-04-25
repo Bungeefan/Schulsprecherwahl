@@ -56,8 +56,9 @@ global $title;
             <div id="candidates" class="tab-pane active">
                 <div class="data">
                     <div class="leftCard">
-                        <h3><label for="candidateList"><span id="candidatesCounter">0</span>
-                                Kandidaten</label></h3>
+                        <h3>
+                            <label for="candidateList"> <span id="candidatesCounter">0</span> Kandidaten</label>
+                        </h3>
                         <select id="candidateList" size="20">
                         </select>
                     </div>
@@ -153,7 +154,11 @@ global $title;
                 </div>
                 <div class="data">
                     <div class="leftCard">
-                        <h3><span><span id="keysCounter">0</span> Keys</span></h3>
+                        <h3>
+                            <label for="keysList">
+                                <span id="keysCounter">0</span> Keys
+                            </label>
+                        </h3>
                         <h5><span><span id="unusedKeysCounter">0</span> davon unbenutzt</span></h5>
                         <select multiple id="keysList" size="20">
                         </select>

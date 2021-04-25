@@ -6,12 +6,12 @@ session_start();
 
 $loginEnabled = !isLoginDisabled();
 
-if (isset($_GET['logout']) || isset($_SESSION['key']) && !checkKeyVotes($_SESSION['key'])) {
+if (isset($_GET['logout']) || (isset($_SESSION['key']) && !checkKeyVotes($_SESSION['key']))) {
     logout($_SESSION['key']);
     header("Location: index.php");//reload
     die();
 }
-$formWasSubmitted = $_SERVER['REQUEST_METHOD'] == 'POST';
+$formWasSubmitted = $_SERVER['REQUEST_METHOD'] === 'POST';
 
 if ($formWasSubmitted && !isset($_SESSION['key'])) {
     if (isset($_POST['key'])) {
@@ -28,9 +28,9 @@ if ($formWasSubmitted && !isset($_SESSION['key'])) {
                     session_regenerate_id();
                     header("Location: voting.php?type=" . $candidates_types[0]->ID);
                     die();
-                } else {
-                    $errorMessage = "Es sind keine Wahlen definiert!";
                 }
+
+                $errorMessage = "Es sind keine Wahlen definiert!";
             } else {
                 $errorMessage = "Dieser Key ist ungültig!";
             }

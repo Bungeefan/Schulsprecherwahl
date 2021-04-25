@@ -1,6 +1,6 @@
 <?php
-define("DB_HOST", "localhost");
-define("DB_NAME", "voting_system");
-define("DB_USER", "root");
-define("DB_PASS", "");
-define("DB_CHAR", "utf8");
+const DB_HOST = "localhost";
+const DB_NAME = "voting_system";
+const DB_USER = "root";
+const DB_PASS = "";
+const DB_CHAR = "utf8";

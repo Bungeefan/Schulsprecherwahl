@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . "/../default_start.inc.php";
+global $database;
 if (!$database->isWorking()) {
     $errorMessage = $database->getLastError();
 }

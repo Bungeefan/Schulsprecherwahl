@@ -5,7 +5,7 @@ global $arr;
 if (checkDatabase($arr)) {
     $results = getResults();
 
-    if ($results != null) {
+    if ($results !== null) {
         http_response_code(200);
         $arr = $results;
     } else {

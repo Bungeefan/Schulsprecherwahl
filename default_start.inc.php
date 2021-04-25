@@ -3,13 +3,14 @@ ini_set('html_errors', false);
 define("PROJECT_PATH", str_replace($_SERVER["DOCUMENT_ROOT"] . "/", "", str_replace("\\", "/", __DIR__)));
 
 $ua = htmlentities($_SERVER['HTTP_USER_AGENT'], ENT_QUOTES, 'UTF-8');
-if (basename($_SERVER["SCRIPT_FILENAME"], '.inc.php') != "not_supported" && (preg_match('~MSIE|Internet Explorer~i', $ua) || (strpos($ua, 'Trident/7.0') !== false && strpos($ua, 'rv:11.0') !== false))) {
+if (basename($_SERVER["SCRIPT_FILENAME"], '.inc.php') !== "not_supported" && (preg_match('~MSIE|Internet Explorer~i', $ua)
+        || (str_contains($ua, 'Trident/7.0') && str_contains($ua, 'rv:11.0')))) {
     $browser = "Internet Explorer";
     include_once("php/not_supported.inc.php");
     die();
 }
 
-require_once __DIR__ . "/admin/api/config/database.php";
+require_once __DIR__ . "/admin/api/config/Database.php";
 
 $configFile = __DIR__ . "/settings.cfg.json";
 $config = new stdClass();
@@ -20,7 +21,7 @@ $database = new Database();
 
 readConfig();
 
-function checkKey($key, $checkUsed = true)
+function checkKey($key, $checkUsed = true): bool
 {
     global $errorMessage;
     if (isset($key)) {
@@ -29,14 +30,14 @@ function checkKey($key, $checkUsed = true)
             $statement = $database->getConnection()->prepare("SELECT * FROM `voting_keys` WHERE VoteKey = :voteKey");
             $statement->execute(array(':voteKey' => $key));
             $result = $statement->fetch(PDO::FETCH_ASSOC);
-            if ($result != null) {
+            if ($result !== null) {
                 if (!$result['Blacklisted']) {
                     if ($checkUsed) {
-                        if ($result['Used'] == null) {
+                        if ($result['Used'] === null) {
                             return true;
-                        } else {
-                            $errorMessage = "Dieser Key wurde schon benutzt!";
                         }
+
+                        $errorMessage = "Dieser Key wurde schon benutzt!";
                     } else {
                         return true;
                     }
@@ -52,15 +53,15 @@ function checkKey($key, $checkUsed = true)
     return false;
 }
 
-function checkKeyVotes($key)
+function checkKeyVotes($key): bool
 {
     global $errorMessage;
     $result = getKeyVotes($key);
     if ($result < 2) {
         return true;
-    } else {
-        $errorMessage = "Mit diesem Key wurde bereits abgestimmt!";
     }
+
+    $errorMessage = "Mit diesem Key wurde bereits abgestimmt!";
     return false;
 }
 
@@ -93,7 +94,7 @@ function logout($key)
     }
 }
 
-function getCandidates($currentType)
+function getCandidates($currentType): PDOStatement
 {
     global $database;
     if ($currentType['DependingOnClass']) {
@@ -113,7 +114,7 @@ ORDER  BY ID ASC
 //    $statement = $database->getConnection()->prepare("SELECT * FROM `candidates` WHERE CandidateType = :type" .
 //        ($currentType['DependingOnClass'] ? " AND Class = " . $_SESSION['key']['Class'] : "") .
 //        " ORDER BY ID ASC");
-        $statement->bindValue(":key", $_SESSION['key'], PDO::PARAM_STR);
+        $statement->bindValue(":key", $_SESSION['key']);
     } else {
         $statement = $database->getConnection()->prepare("SELECT * FROM `candidates` WHERE CandidateType = :type ORDER BY ID ASC");
     }
@@ -122,36 +123,39 @@ ORDER  BY ID ASC
     return $statement;
 }
 
-function isLoginDisabled()
+function isLoginDisabled(): bool
 {
     global $config;
-    return $config->loginDisabled ?? false;
+    return $config['loginDisabled'] ?? false;
 }
 
 function setLoginDisabled($value)
 {
     global $config;
-    $config->loginDisabled = $value;
+    $config['loginDisabled'] = $value;
 }
 
-function isVoteDisabled()
+function isVoteDisabled(): bool
 {
     global $config;
-    return $config->voteDisabled ?? false;
+    return $config['voteDisabled'] ?? false;
 }
 
 function setVoteDisabled($value)
 {
     global $config;
-    $config->voteDisabled = $value;
+    $config['voteDisabled'] = $value;
 }
 
+/**
+ * @throws JsonException
+ */
 function saveConfig()
 {
     global $configFile, $config;
-    $openConfigFile = fopen($configFile, "w");
+    $openConfigFile = fopen($configFile, 'wb');
     if ($openConfigFile) {
-        fwrite($openConfigFile, json_encode($config, JSON_PRETTY_PRINT));
+        fwrite($openConfigFile, json_encode($config, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
         fclose($openConfigFile);
     }
 }
@@ -162,9 +166,13 @@ function readConfig()
     if (file_exists($configFile)) {
         $fileContent = file_get_contents($configFile);
         if ($fileContent !== false) {
-            $config = json_decode($fileContent);
-            return;
+            try {
+                $config = json_decode($fileContent, true, 512, JSON_THROW_ON_ERROR);
+            } catch (JsonException) {
+            }
         }
     }
-    $config = new stdClass();
+    if (!isset($config)) {
+        $config = new stdClass();
+    }
 }

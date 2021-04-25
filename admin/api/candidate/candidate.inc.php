@@ -2,6 +2,11 @@
 require_once __DIR__ . "/../config/ajax_start.inc.php";
 require_once "upload.inc.php";
 
+//File Status
+const NOT_RECEIVED = -1;
+const UPLOAD = 0;
+const DELETE = 1;
+
 function deleteOldImage($candidateID)
 {
     global $database, $intern_upload_folder;
@@ -17,32 +22,32 @@ WHERE `ID` = :candidateID
     )");
     if ($statement->execute(array(":candidateID" => $candidateID))) {
         $result = $statement->fetchColumn();
-        if ($result != null && file_exists($intern_upload_folder . $result)) {
+        if ($result !== null && file_exists($intern_upload_folder . $result)) {
             $imageDeleted = unlink($intern_upload_folder . $result);
         } else {
             $imageDeleted = false;
         }
-    } else $imageDeleted = false;
+    } else {
+        $imageDeleted = false;
+    }
     return $imageDeleted;
 }
 
-function imageReceived($data)
+function imageReceived($data): int
 {
-    $imageReceived = false;
+    $fileStatus = NOT_RECEIVED;
     if (!empty($_FILES['image']['name'])) {
-        $imageReceived = true;
+        $fileStatus = UPLOAD;
     } else if (empty($data->candidateImage)) {
-        $imageReceived = true;
+        //user pressed delete button
+        $fileStatus = DELETE;
     }
-    return $imageReceived;
+    return $fileStatus;
 }
 
-function processImage($data, &$imagePath, &$message)
+function processImage(&$imagePath, &$message)
 {
     if (!empty($_FILES['image']['name'])) {
         $imagePath = processReceivedImage($message);
-        $imageReceived = true;
-    } else if (empty($data->candidateImage)) {
-        $imagePath = null;
     }
 }

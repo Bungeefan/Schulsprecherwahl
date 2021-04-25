@@ -28,11 +28,11 @@ function getResults()
         }
     }
 
-    if (count($results) == count($candidates_types)) {
+    if (count($results) === count($candidates_types)) {
         return $results;
-    } else {
-        return null;
     }
+
+    return null;
 }
 
 function getSumVotes($type)

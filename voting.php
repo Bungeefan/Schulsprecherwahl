@@ -17,19 +17,19 @@ $currentType = null;
 if (!isset($_REQUEST['type'])) {
     header("Location: voting.php?type=" . $candidates_types[0]['ID']);
     die();
-} else {
-    $currentType = null;
-    foreach ($candidates_types as $type) {
-        if ($type['ID'] == $_REQUEST['type']) {
-            $currentType = $type;
-            break;
-        }
+}
+
+$currentType = null;
+foreach ($candidates_types as $type) {
+    if ($type['ID'] === $_REQUEST['type']) {
+        $currentType = $type;
+        break;
     }
-    $countedVotes = getKeyVotes($_SESSION['key']);
-    if ($currentType == null || array_search($currentType, $candidates_types) != $countedVotes) {
-        header("Location: voting.php?type=" . $candidates_types[$countedVotes]['ID']);
-        die();
-    }
+}
+$countedVotes = getKeyVotes($_SESSION['key']);
+if ($currentType === null || array_search($currentType, $candidates_types, true) !== $countedVotes) {
+    header("Location: voting.php?type=" . $candidates_types[$countedVotes]['ID']);
+    die();
 }
 
 
@@ -42,7 +42,7 @@ $maxPoints = count($candidates);
 
 $invalidInput = false;
 $canContinue = true;
-$formWasSubmitted = $_SERVER['REQUEST_METHOD'] == 'POST';
+$formWasSubmitted = $_SERVER['REQUEST_METHOD'] === 'POST';
 $votePoints = array();
 $preferenceVote = array();
 $finishMessage = "Danke fürs Wählen!";
@@ -50,19 +50,22 @@ if ($formWasSubmitted) {
     if (checkKey($_SESSION['key'], false) && checkKeyVotes($_SESSION['key'])) {
         if ($voteEnabled) {
             foreach ($candidates as $candidate) {
-                if (!$runoff && isset($_POST['votePoints_' . $candidate['ID']])) {
-                    $points = $_POST['votePoints_' . $candidate['ID']];
-                    if ($points != null) {
+                $votePointsKey = 'votePoints_' . $candidate['ID'];
+                $runoffKey = 'runoff_' . $candidate['ID'];
+
+                if (!$runoff && isset($_POST[$votePointsKey])) {
+                    $points = $_POST[$votePointsKey];
+                    if ($points !== null) {
                         if ($points < 0 || $points > $maxPoints) {
                             $invalidInput = true;
                             break;
-                        } else {
-                            $votePoints[$candidate['ID']] = $points;
                         }
+
+                        $votePoints[$candidate['ID']] = $points;
                     }
-                } else if ($runoff && isset($_POST['runoff_' . $candidate['ID']])) {
-                    $runoffVote = $_POST['runoff_' . $candidate['ID']];
-                    if ($runoffVote == "vote") {//isChecked
+                } else if ($runoff && isset($_POST[$runoffKey])) {
+                    $runoffVote = $_POST[$runoffKey];
+                    if ($runoffVote === "vote") {//isChecked
                         $preferenceVote[$candidate['ID']] = $runoffVote;
                     }
                 }
@@ -121,7 +124,7 @@ if ($formWasSubmitted) {
 }
 
 
-if (count($candidates) > 0 && $canContinue) {
+if ($canContinue && count($candidates) > 0) {
     header("refresh:15;url=index.php");
 }
 ?>

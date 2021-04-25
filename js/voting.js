@@ -1,5 +1,6 @@
 "use strict";
 
+const voteForm = $("#voteForm");
 const selects = $("form .choice select");
 const maxPoints = selects.length;
 const checkboxes = $("form .choice input[type=checkbox]");
@@ -65,8 +66,8 @@ function askOnExit() {
     $('#warningModal .modal-footer button').on('click', function (event) {
         $(this).closest('.modal').one('hide.bs.modal', function () {
             if ($(event.target).hasClass("yes")) {
-                $("#voteForm").off("submit");
-                $("#voteForm").submit();
+                voteForm.off("submit");
+                voteForm.submit();
             }
         });
     });
@@ -88,4 +89,4 @@ function askOnExit() {
     });
 }));*/
 
-$("#voteForm").submit(listener);
+voteForm.submit(listener);
