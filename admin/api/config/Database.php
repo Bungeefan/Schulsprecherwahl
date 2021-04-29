@@ -26,7 +26,7 @@ class Database
         $this->getConnection();
     }
 
-    public function getConnection(): PDO
+    public function getConnection(): PDO|null
     {
         if ($this->conn === null) {
             try {
