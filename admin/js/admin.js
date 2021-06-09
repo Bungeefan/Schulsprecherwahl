@@ -316,11 +316,7 @@ let candidateSelection = null;
 
 function refreshCandidates(forceRefresh) {
     if (selectCandidates || candidatesCounter) {
-        if (selectCandidates.val() && selectCandidates.val().length > 0) {
-            candidateSelection = selectCandidates.val();
-        } else {
-            candidateSelection = null;
-        }
+        candidateSelection = getCurrentSelection(selectCandidates);
         $.ajax({
             url: `${baseUrl}/candidate/get.php`,
             data: {minimized: "1"},
@@ -357,11 +353,7 @@ function refreshCandidates(forceRefresh) {
 let classSelection = null;
 
 function fillClassList(el, forceRefresh) {
-    if (el.val() && el.val().length > 0) {
-        classSelection = el.val();
-    } else {
-        classSelection = null;
-    }
+    classSelection = getCurrentSelection(el);
     $.ajax({
         url: `${baseUrl}/classes/get.php`,
         success: function (data) {
@@ -456,11 +448,7 @@ let keysSelection = null;
 
 function refreshKeys() {
     if (selectKeys || keysCounter || unusedKeysCounter) {
-        if (selectKeys.val() && selectKeys.val().length > 0) {
-            keysSelection = selectKeys.val();
-        } else {
-            keysSelection = null;
-        }
+        keysSelection = getCurrentSelection(selectKeys);
         $.ajax({
             url: `${baseUrl}/key/get.php?class=${$("option:selected", classList).attr("data-name")}`,
             success: function (data) {
@@ -641,11 +629,7 @@ function generateKeysAction(event) {
 let typeSelection = null;
 
 function fillTypeList(el) {
-    if (el.val() && el.val().length > 0) {
-        typeSelection = el.val();
-    } else {
-        typeSelection = null;
-    }
+    typeSelection = getCurrentSelection(el);
     $.ajax({
         url: `${baseUrl}/candidates_types/get.php`,
         success: function (data) {
@@ -747,7 +731,10 @@ function refreshResults() {
     }
 }
 
+let subjectAreaSelection = null;
+
 function fillFilter() {
+    subjectAreaSelection = getCurrentSelection(selectFilter);
     $.ajax({
         url: `${baseUrl}/subject_areas/get.php`,
         success: function (data) {
@@ -759,7 +746,7 @@ function fillFilter() {
                 selectFilter.append(optionElement);
             });
 
-            selectLastOption(selectFilter, typeSelection);
+            selectLastOption(selectFilter, subjectAreaSelection);
             selectFilter.change();
         },
         error: errorFunction,
@@ -904,6 +891,10 @@ function selectLastOption(select, lastSelection) {
             select.prop("selectedIndex", false);
         }
     }
+}
+
+function getCurrentSelection(el) {
+    return el.val() && el.val().length > 0 ? el.val() : null;
 }
 
 init();
