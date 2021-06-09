@@ -30,7 +30,7 @@ function checkKey($key, $checkUsed = true): bool
             $statement = $database->getConnection()->prepare("SELECT * FROM `voting_keys` WHERE VoteKey = :voteKey");
             $statement->execute(array(':voteKey' => $key));
             $result = $statement->fetch(PDO::FETCH_ASSOC);
-            if ($result !== null) {
+            if ($result) {
                 if (!$result['Blacklisted']) {
                     if ($checkUsed) {
                         if ($result['Used'] === null) {
@@ -45,10 +45,13 @@ function checkKey($key, $checkUsed = true): bool
                     $errorMessage = "Dieser Key wurde gesperrt!";
                 }
             }
+            if (empty($errorMessage)) {
+                $errorMessage = "Dieser Key ist ungültig!";
+            }
         }
     }
     if (empty($errorMessage)) {
-        $errorMessage = "Dieser Key ist ungültig!";
+        $errorMessage = "Es ist ein Fehler aufgetreten!";
     }
     return false;
 }

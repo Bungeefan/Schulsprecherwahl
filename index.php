@@ -18,19 +18,21 @@ if ($formWasSubmitted && !isset($_SESSION['key'])) {
         $key = $_POST['key'];
 
         if ($loginEnabled) {
-            if (!empty($key) && checkKey($key) && checkKeyVotes($key)) {
-                $statement = $database->getConnection()->query("SELECT * FROM `candidates_types` ORDER BY ID ASC");
-                $candidates_types = $statement->fetchAll(PDO::FETCH_ASSOC);
+            if (!empty($key)) {
+                if (checkKey($key) && checkKeyVotes($key)) {
+                    $statement = $database->getConnection()->query("SELECT * FROM `candidates_types` ORDER BY ID ASC");
+                    $candidates_types = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-                if (!empty($candidates_types)) {
-                    $_SESSION['key'] = $key;
-                    updateKeyUsedTime($key);
-                    session_regenerate_id();
-                    header("Location: voting.php?type=" . $candidates_types[0]->ID);
-                    die();
+                    if (!empty($candidates_types)) {
+                        $_SESSION['key'] = $key;
+                        updateKeyUsedTime($key);
+                        session_regenerate_id();
+                        header("Location: voting.php?type=" . $candidates_types[0]->ID);
+                        die();
+                    }
+
+                    $errorMessage = "Es sind keine Wahlen definiert!";
                 }
-
-                $errorMessage = "Es sind keine Wahlen definiert!";
             } else {
                 $errorMessage = "Dieser Key ist ungültig!";
             }
